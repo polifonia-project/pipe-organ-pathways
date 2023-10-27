@@ -4,7 +4,8 @@ export class CollectionArtwork {
         public artist?: string,
         public year?: string,
         public filelocation?: string,
-        public searchstring?: string
+        public searchstring?: string,
+        public location?: string
     ) {}
 }
 

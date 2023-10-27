@@ -3,16 +3,16 @@
 <p class="lead">{{configSettings.artworks_para1}}</p>
 <div *ngIf="isLoggedIn()" class="form-group">
     <div class="bg-white text-black pl-1 pt-1 border-top-0 border-left-0 border-right-0" style="border-width: 2px; border-style: solid;">
-        <strong>My artworks</strong>
+        <strong>My pipe organ collection</strong>
     </div>
     <div class="form-group" *ngIf="getArtworks().length > 6">
         <div class="row pt-1">
             <div class="col-sm-2 pt-1" style="min-width: 12em;">
-               <label for="search-text">Filter my artworks:</label>
+               <label for="search-text">Filter my collection:</label>
             </div>
             <div class="col-sm">
                 <input type="email" class="form-control" id="search-text" aria-describedby="search-text" 
-                [(ngModel)]="searchText" placeholder="Artwork, artist or year">
+                [(ngModel)]="searchText" placeholder="Organ or builder">
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@
                 <span *ngIf="deleteConfirmation_Id==item._id">
                     <div class="alert alert-danger" role="alert"><strong>Are you sure you want to delete this artwork from your collection?</strong>
                     <span *ngIf="getScriptsOfAnArtwork(item._id).length > 0">
-                        <p><strong>It will be removed from the following scripts:</strong></p>
+                        <p><strong>It will be removed from the following paths:</strong></p>
                     </span>
                     <ul *ngIf="getScriptsOfAnArtwork(item._id).length > 0">
                         <li *ngFor="let artworkscript of getScriptsOfAnArtwork(item._id);">{{artworkscript.name}}</li>

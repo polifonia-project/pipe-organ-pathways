@@ -2,7 +2,7 @@
 <div style="width: 100%; background-color: white;" class="border pl-3 pr-3 mb-3">
 <!-- <p class="lead" *ngIf="viewScript=='0'">Select a script.</p> -->
 <!-- <p class="lead" *ngIf="viewScript!='0'"><strong>Selected script: </strong><span *ngIf="selectedScript.name">{{selectedScript.name}}</span></p> -->
-    <p class="lead">Manage your scripts.</p>
+    <p class="lead">Manage your paths.</p>
     <ng-container *ngIf="!isLoggedOut()">
         <div *ngIf="isAdmin() && currentUser!=1 && model.viewScript!='0'" class="row">
             <div class="col-sm-1" style="min-width: 10em;">
@@ -19,7 +19,7 @@
             <div class="col">
                 <div class="row">
                     <div class="col-sm-1" style="min-width: 10em;">
-                        <strong>Selected script: </strong>
+                        <strong>Selected path: </strong>
                     </div>
                     <div class="col-sm">
                         <span>
@@ -36,7 +36,7 @@
         <div *ngIf="model.viewScript=='0'" class="row mb-3">
             <div *ngIf="isAdmin() && !showallscripts" class="row mb-3">
                 <div class="col-sm-1" style="min-width: 15em;">
-                    <label class="form-check-label"><strong>Show scripts authored by:</strong></label>
+                    <label class="form-check-label"><strong>Show paths authored by:</strong></label>
                 </div>
                 <div class="col-sm" *ngIf="model.viewScript=='0'">
                     <select class="form-select form-select-sm" [(ngModel)]="currentUser" (change)="model.viewScript='0'; deleteStageConfirmationId=0; showStageHelp=false; newStageMessage=false; copyStageMessage=false;">
@@ -50,7 +50,7 @@
             <div class="form-group" *ngIf="getScripts().length > 6">
                 <div class="row pt-1">
                     <div class="col-sm-2 pt-1" style="min-width: 12em;">
-                       <label for="search-text">Filter my scripts:</label>
+                       <label for="search-text">Filter my paths:</label>
                     </div>
                     <div class="col-sm">
                         <input type="email" class="form-control" id="search-text" aria-describedby="search-text" 
@@ -61,7 +61,7 @@
 
             <div class="col">&nbsp;</div>
             <div class="col-4" style="min-width: 8em;">
-                <button class="btn btn-success float-right" (click)="addScript(); copyScriptMessage=false;" *ngIf="(!isAdmin() || (isAdmin() && currentUser==1))">New script</button>
+                <button class="btn btn-success float-right" (click)="addScript(); copyScriptMessage=false;" *ngIf="(!isAdmin() || (isAdmin() && currentUser==1))">New path</button>
             </div>
         </div>
     </ng-container>
@@ -74,16 +74,16 @@
             <h4>{{script.name}}</h4>
         </div>
         <div class="col-md-1" style="min-width: 18em;" *ngIf="isAdmin()">
-            <button class="btn btn-secondary float-right" (click)="selectScript(script._id); showup(); copyScriptMessage=false;">Open script</button>
-            <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser==1" (click)="copyScript(script);">Copy script</button>
-            <button class="btn btn-success float-right mt-3" style="clear: both;" *ngIf="script.removed && currentUser!=1" (click)="restoreScript(script); copyScriptMessage=false;">Restore script</button>
-            <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser!=1" (click)="removeScript(script); copyScriptMessage=false;">Remove script</button>
+            <button class="btn btn-secondary float-right" (click)="selectScript(script._id); showup(); copyScriptMessage=false;">Open path</button>
+            <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser==1" (click)="copyScript(script);">Copy path</button>
+            <button class="btn btn-success float-right mt-3" style="clear: both;" *ngIf="script.removed && currentUser!=1" (click)="restoreScript(script); copyScriptMessage=false;">Restore path</button>
+            <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser!=1" (click)="removeScript(script); copyScriptMessage=false;">Remove path</button>
             <button class="btn btn-danger float-right mr-3 mt-3" (click)="confirmDelete(script._id); copyScriptMessage=false;">Delete script</button>
         </div>
         <div class="col-md-1" style="min-width: 16em;" *ngIf="!isAdmin()">
-            <button class="btn btn-secondary float-right" (click)="selectScript(script._id); showup(); copyScriptMessage=false;">Open script</button>
+            <button class="btn btn-secondary float-right" (click)="selectScript(script._id); showup(); copyScriptMessage=false;">Open path</button>
             <button class="btn btn-success float-right mt-3" style="clear: both;" (click)="copyScript(script);">Copy script</button>
-            <button class="btn btn-danger float-right mr-3 mt-3" (click)="confirmRemove(script._id); copyScriptMessage=false;">Remove script</button>
+            <button class="btn btn-danger float-right mr-3 mt-3" (click)="confirmRemove(script._id); copyScriptMessage=false;">Remove path</button>
         </div>
     </div>
     <span *ngIf="copiedScript==script.id && copyScriptMessage">
@@ -107,7 +107,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-2" style="min-width: 8em;">
-                    <strong>Artworks: </strong>
+                    <strong>Organs: </strong>
                 </div>
                 <div class="col-sm">
                     <span *ngFor="let artwork of getArtworksFromIds(script.name, script.artworkids, script);">
@@ -151,13 +151,13 @@
             </div>
             <div class="row mt-1" *ngIf="script.open && script.stages.length > 0;">
                 <div class="col-sm-2" style="min-width: 8em;">
-                    <strong>Script: </strong>
+                    <strong>Path: </strong>
                 </div>
                 <div class="col-sm">
                     <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'scripts'}">
-                        <button class="btn btn-light mr-3">View script <i class='fa fa-link'></i></button>
+                        <button class="btn btn-light mr-3">View path <i class='fa fa-link'></i></button>
                     </a>
-                    <button class="btn btn-light" ngbPopover="{{scriptURL(script)}}" popoverTitle="Script URL copied:" ngxClipboard [cbContent]='scriptURL(script)'>Copy script URL <i class="fa fa-clone" aria-hidden="true"></i></button>
+                    <button class="btn btn-light" ngbPopover="{{scriptURL(script)}}" popoverTitle="Script URL copied:" ngxClipboard [cbContent]='scriptURL(script)'>Copy path URL <i class="fa fa-clone" aria-hidden="true"></i></button>
                 </div>
             </div>
             <div class="row mt-1" *ngIf="script.stages.length > 0 && !statementOnlyScript(script)">
@@ -194,7 +194,7 @@
                         />
                         <label class="form-check-label">Closed&nbsp;&nbsp;</label>
                     </div>
-                    <div class = "help-block">Select Open to allow users to respond to this script, or Closed to prevent any responses. Open scripts can be accessed directly online even if they are Private.</div>
+                    <div class = "help-block">Select Open to allow users to respond to this script, or Closed to prevent any responses. Open paths can be accessed directly online even if they are Private.</div>
                 </div>
             </div>
             <div class="row mt-1" *ngIf="isAdmin()">
@@ -220,7 +220,8 @@
                         />
                         <label class="form-check-label">Private&nbsp;&nbsp;</label>
                     </div>
-                    <div class = "help-block">Public scripts are shown on the Responses page. Selecting Public and Open means users can respond to the script and it will also be visible on the Home page.</div>
+                    <div *ngIf="!script.homepageartworkid && script.visible" class="text-info">Add a homepage organ to the path to make it visible</div>
+                    <div class = "help-block">Public paths are shown on the homepage. Selecting Public and Open means users can follow to the path as well as see other people's responses.</div>
                 </div>
             </div>
             <div class="row mt-1" *ngIf="isAdmin()">
@@ -284,17 +285,17 @@
 <div *ngIf="model.viewScript!='0'" style="width: 100%; background-color: white;" class="pl-3 pr-3 pt-1">
     <ul ngbNav #nav="ngbNav" class="nav-pills">
         <li ngbNavItem>
-          <a ngbNavLink><strong>Artworks</strong></a>
+          <a ngbNavLink><strong>Organs</strong></a>
           <ng-template ngbNavContent>
-            <p>Choose the artworks for your script.</p>
+            <p>Choose the organs for your path.</p>
             <div class="form-group" *ngIf="getArtworks(model.selectedScript).length > 6">
                 <div class="row">
                     <div class="col-sm-2 pt-1" style="min-width: 12em;">
-                       <label for="search-text">Filter my artworks:</label>
+                       <label for="search-text">Filter my collection:</label>
                     </div>
                     <div class="col-sm">
                         <input type="email" class="form-control" id="search-text" aria-describedby="search-text" 
-                        [(ngModel)]="searchText" placeholder="Artwork, artist or year">
+                        [(ngModel)]="searchText" placeholder="Organ or builder">
                     </div>
                 </div>
             </div>
@@ -376,7 +377,7 @@
         <li ngbNavItem>
           <a ngbNavLink><strong>Stages</strong></a>
           <ng-template ngbNavContent>
-            <p>Manage the stages of your script.</p>
+            <p>Manage the stages of your path.</p>
             <div class="row" *ngIf="editScriptStage==0">
                 <div class="col-sm-2">
                     <span class="font-weight-bold">Add stage:</span>
@@ -460,11 +461,11 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-2" style="min-width: 8em;">
-                                <span class="font-weight-bold">Artworks: </span>
+                                <span class="font-weight-bold">Organs: </span>
                             </div>
                             <div class="col-sm">
                                 <span *ngIf="!getArtworksFromIds(model.selectedScript.name, model.selectedScript.artworkids, model.selectedScript).length" class="text-info">
-                                    Select artworks for your script from the Artworks tab.
+                                    Select organs for your path from the Organs tab
                                 </span>
                                 <span *ngFor="let artwork of getArtworksFromIds(stage.title, stage.includeartworks, model.selectedScript, stage);">
                                     <span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span>, {{artwork.year}}<br/>
@@ -597,11 +598,11 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-2" style="min-width: 8em;">
-                                <span class="font-weight-bold">Artworks: </span>
+                                <span class="font-weight-bold">Organs: </span>
                             </div>
                             <div class="col-sm">
                                 <div *ngIf="!getArtworksFromIds(model.selectedScript.name, model.selectedScript.artworkids, model.selectedScript).length" class="text-info">
-                                    Select artworks for your script from the Artworks tab.
+                                    Select organs for your path from the Organs tab.
                                 </div>
                                 <table>
                                     <tr *ngFor="let artwork of getArtworksFromIds(model.selectedScript.name, model.selectedScript.artworkids, model.selectedScript)" class="mr-3">
@@ -823,7 +824,7 @@
             <a ngbNavLink><strong>Themes</strong></a>
             <ng-template ngbNavContent>
                 <p>
-                    Choose one or more themes for your script.
+                    Choose one or more themes for your path.
                 </p>
                 <div *ngFor="let theme of getThemes()" class="form-check form-check-inline pr-3 pb-2">
                     <!-- <span style="float: left;" class="mr-2 form-check form-check-inline"> -->
@@ -844,7 +845,7 @@
             <a ngbNavLink><strong>Title</strong></a>
             <ng-template ngbNavContent>
                 <p>
-                    Decide how your script will be presented in Deep Viewpoints. 
+                    Decide how your path will be presented. 
                 </p>
 
                 <div class="row pb-3">
@@ -862,18 +863,18 @@
                     </div>
                     <div class="col-sm">
                         <textarea rows="3" class="form-control" [(ngModel)]="model.selectedScript.description" (change)="saveScript(model.selectedScript)"></textarea>
-                        <div class = "help-block">A short description of what the script is about, what will it involve, why people should take part</div>
+                        <div class = "help-block">A short description of what the path is about, what will it involve, why people should follow it</div>
                     </div>
                 </div>
 
                 <div class="row pb-3">
                     <div class="col-sm-3" style="min-width: 7em;">
-                        <span class="font-weight-bold">Homepage artwork: </span>
+                        <span class="font-weight-bold">Homepage organ: </span>
                     </div>
                     
                     <div class="col-sm">
                         <div *ngIf="!getArtworksFromIds(model.selectedScript.name, model.selectedScript.artworkids, model.selectedScript).length" class="text-info">
-                            Select artworks for your script from the Artworks tab.
+                            Select organs for your path from the Organs tab.
                         </div>
                         <div *ngFor="let artwork of getArtworksFromIds(model.selectedScript.name, model.selectedScript.artworkids, model.selectedScript)">
                             <div class="form-check form-check-inline">
@@ -898,7 +899,7 @@
             <a ngbNavLink><strong>Shuffle</strong></a>
             <ng-template ngbNavContent>
                 <p>
-                    Shuffle selected stages each time the script is used.
+                    Shuffle selected stages each time the path is used.
                 </p>
                     <div *ngFor="let stage of model.selectedScript.stages; let i = index" class="form-check mr-1 pb-2 ml-2">
                         <input 
@@ -913,7 +914,7 @@
                 <br/><br/>
             </ng-template>
         </li>
-        <li ngbNavItem *ngIf="isAdmin()">
+        <!-- <li ngbNavItem *ngIf="isAdmin()">
             <a ngbNavLink><strong>Exhibitions</strong></a>
             <ng-template ngbNavContent>
                 <p>
@@ -931,7 +932,7 @@
                 </div>
                 <br/><br/>
             </ng-template>
-        </li>
+        </li> -->
       </ul>
       <div [ngbNavOutlet]="nav"></div>
 </div>

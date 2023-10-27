@@ -1,6 +1,6 @@
 <paNavBar></paNavBar>
 <div style="width: 100%; background-color: white;" class="border pl-3 pr-3">
-<p class="lead">Below are the themes which you can link to your scripts. Using existing themes allows your scripts to be displayed with other scripts of that theme. If none of the themes match your script, you can add further themes. Other script authors will be able to link their scripts to your theme.</p>
+<p class="lead">Below are the themes which you can link to your paths. Using existing themes allows your path to be displayed with other paths of that theme. If none of the themes match your path, you can add further themes. Other path authors will be able to link their paths to your theme.</p>
 <div *ngIf="isLoggedIn()" class="form-group">
 
 <table class="table table-sm"> 
@@ -60,7 +60,7 @@
             <td class="col-xs"> -->
         
                 <span *ngIf="tableEditing && editrow==item._id" style="float:right">
-                    <button class="btn btn-warning" (click)="tableEditing=false; addTheme(item); reloadThemes()" [disabled]="!item.name || !item.description">Save</button>
+                    <button class="btn btn-warning" (click)="tableEditing=false; addTheme(item);" [disabled]="!item.name || !item.description">Save</button>
                 </span>
             </td>
         </tr>

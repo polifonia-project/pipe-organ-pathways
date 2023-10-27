@@ -74,18 +74,22 @@ import { ScriptSet } from "./scriptSet.model";
     
     // Script set
     getScriptSetData(): Observable<ScriptSet[]> { 
+        // return this.http.get<ScriptSet[]>(this.userUrl, this.configSettings.config);
         return this.http.get<ScriptSet[]>(this.scriptsetUrl); 
     } 
 
     saveScriptSet(scriptset: ScriptSet): Observable<ScriptSet> { 
+        // return this.http.post<ScriptSet>(this.saveUrl, scriptset, this.configSettings.config);
         return this.http.post<ScriptSet>(this.saveUrl, scriptset); 
     }
 
     updateScriptSet(scriptset: ScriptSet): Observable<ScriptSet> {
+        // return this.http.put<ScriptSet>(`${this.saveUrl}/${scriptset._id}`, scriptset, this.configSettings.config);
         return this.http.put<ScriptSet>(`${this.saveUrl}/${scriptset._id}`, scriptset); 
     }
 
     deleteScriptSet(_id: string): Observable<ScriptSet> { 
+        // return this.http.delete<ScriptSet>(`${this.saveUrl}/${_id}`, this.configSettings.config);
         return this.http.delete<ScriptSet>(`${this.saveUrl}/${_id}`); 
     }
 
@@ -175,14 +179,16 @@ import { ScriptSet } from "./scriptSet.model";
 
     //Collection query
 
-    private collectionURL = "https://api2.mksmart.org/query/" + this.configSettings.collectionDatasetUUID + "/sparql?query=" + this.configSettings.collectionQuery;
+    private collectionURL = "http://127.0.0.1:9999/blazegraph/sparql?query="+this.configSettings.collectionQuery;
+
+    // private collectionURL = "https://api2.mksmart.org/query/" + this.configSettings.collectionDatasetUUID + "/sparql?query=" + this.configSettings.collectionQuery;
       
     getCollection(): Observable<CollectionArtwork> {
         const obs = new Observable((observer) => {
-            this.http.get<any>(this.collectionURL, this.configSettings.config).subscribe(data => {
+            this.http.get<any>(this.collectionURL).subscribe(data => {
                 let resarray:  Array<CollectionArtwork> = [];
                 for(var item of data["results"]["bindings"]) {
-                    observer.next(new CollectionArtwork(item["title"]["value"], item["creatorname"]["value"], item["year"]["value"], item["artworkurl"]["value"], item["title"]["value"]+', '+item["creatorname"]["value"]+', '+item["year"]["value"]));
+                    observer.next(new CollectionArtwork(item["title"]["value"], item["creatorname"]["value"], item["year"]["value"], this.configSettings.baseURL+"assets/img/350x350/"+item["artworkurl"]["value"]+".jpg", item["title"]["value"]+', '+item["creatorname"]["value"]+', '+item["year"]["value"], item["location"]["value"]));
                 }
                 observer.complete();
             },

@@ -46,6 +46,14 @@ div {
 a {color: rgb(170, 170, 170);
 }
 
+/*Pipe organ*/
+.museum-colour {
+  background-color: rgb(75, 85, 99);
+}
+.museum-colour:not(:disabled) {
+  background-color: rgb(75, 85, 99);
+}
+
 /*Design Museum*/
 /* .museum-colour {
   background-color: rgb(255, -0, 0);
@@ -55,12 +63,12 @@ a {color: rgb(170, 170, 170);
 } */
 
 /*IMMA*/
-.museum-colour {
+/* .museum-colour {
   background-color: rgb(26, 161, 185);
 }
 .museum-colour:not(:disabled) {
   background-color: rgb(26, 161, 185);
-}
+} */
 
 .container-iframe {
   position: relative;

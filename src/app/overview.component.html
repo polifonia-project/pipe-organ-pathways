@@ -5,7 +5,7 @@
       <h2 class="accordion-header" id="heading1">
         <button class="accordion-button text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
             <span><h4>Featured</h4>
-              A selection of scripts from Deep Viewpoints
+              A selection of paths
             </span>
         </button>
       </h2>
@@ -41,7 +41,7 @@
                     <div class="row mb-3">
                       <div class="col-sm" *ngIf="script.open && script.visible">
                         <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'home'}">
-                          <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View script <i class='fa fa-link'></i></button>
+                          <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
                         </a>
                       </div>
                       <div class="col-sm" *ngIf="script.visible && !statementOnlyScript(script)" >
@@ -56,7 +56,7 @@
           </div>
       </div>
     </div>
-    <div class="accordion-item">
+    <!-- <div class="accordion-item">
         <h2 class="accordion-header" id="heading2">
           <button class="accordion-button collapsed text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
               <span><h4>Exhibitions</h4>
@@ -137,7 +137,7 @@
                       <div class="row mb-3">
                         <div class="col-sm" *ngIf="script.open && script.visible">
                           <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'home'}">
-                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View script <i class='fa fa-link'></i></button>
+                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
                           </a>
                         </div>
                         <div class="col-sm" *ngIf="script.visible && !statementOnlyScript(script)">
@@ -152,7 +152,7 @@
               </span>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="accordion-item">
         <h2 class="accordion-header" id="heading3">
           <button class="accordion-button collapsed text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
@@ -230,7 +230,7 @@
                       <div class="row mb-3">
                         <div class="col-sm" *ngIf="script.open && script.visible" >
                           <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'home'}">
-                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View script <i class='fa fa-link'></i></button>
+                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
                           </a>
                         </div>
                         <div class="col-sm" *ngIf="script.visible && !statementOnlyScript(script)">
@@ -246,11 +246,187 @@
             </div>
         </div>
     </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading7">
+        <button class="accordion-button collapsed text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+            <span><h4>Builders</h4>
+              Paths related to organs of different builders</span>
+        </button>
+      </h2>
+      <div style="background-color: black;" id="collapse7" class="accordion-collapse collapse text-white" aria-labelledby="heading7">
+          <div class="accordion-body">
+            <div class="ng-autocomplete" style="width: 100%;">
+              <span>Search builders:</span>
+              <ng-autocomplete 
+                [data]="builderResults"
+                [searchKeyword]="keywordBuilders"
+                (selected)='selectEventBuilders($event)'
+                (inputChanged)='onChangeSearchBuilders($event)'
+                (inputFocused)='onFocusedBuilders($event)'
+                [itemTemplate]="itemTemplateBuilders"
+                [notFoundTemplate]="notFoundTemplateBuilders"
+                [placeholder]="placeholderTextBuilders"
+                [historyListMaxNumber]="15"
+                [minQueryLength]="2">                                 
+              </ng-autocomplete>
+              <ng-template #itemTemplateBuilders let-item>
+                  <a href="javascript:void(0)">
+                    <span [innerHTML]="item.searchstring"></span>
+                  </a>
+              </ng-template>
+              <ng-template #notFoundTemplateBuilders let-notFound>
+              <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+            <span *ngIf="model.selectedBuilder">
+              <div class="row">
+                &nbsp;
+              </div>
+              <div class="col">
+                <h3 class="row text-left">{{model.selectedBuilder.searchstring}}</h3>
+              </div>
+              <hr>
+              <ngb-carousel [showNavigationArrows]="model.selectedBuilder.scripts.length > 1" [showNavigationIndicators]="model.selectedBuilder.scripts.length > 1">
+                <ng-template ngbSlide *ngFor="let script of model.selectedBuilder.scripts">
+                  <div class="picsum-img-wrapper" style="height: 700px; text-align: center;" *ngFor="let artwork of getArtworkFromId(script.homepageartworkid);">
+                    <div class="col-md-6 col-sm-8 col-10 text-center mx-auto" style="width: 100%;">
+                      <img style="width: 100%;" src="{{artwork.url}}" (error)="handleMissingImage($event)">
+                    </div>
+                  </div>
+                  <div class="carousel-caption">
+                    <div class="row align-items-end">
+                      <h3 class="text-left overviewshadow">{{script.name}}</h3>
+                      <div class="text-left overviewshadow" *ngIf="script.description != ''">
+                        {{script.description}}
+                      </div>
+                      <figcaption class="text-left blockquote-footer text-white overviewshadow">{{script.author}}</figcaption>
+                      <div class="text-left overviewshadow" *ngIf="script.exhibitionids.length > 0"><strong>Exhibitions: </strong>
+                        <ng-container *ngFor="let exhibition of getExhibitionsFromIds(script.exhibitionids); let last = last">
+                          {{exhibition.name}}
+                          <ng-container *ngIf="!last">, </ng-container>
+                        </ng-container>
+                        <br/>
+                      </div>
+                      <div class="text-left overviewshadow" *ngIf="script.themeids.length > 0"><strong>Themes: </strong>
+                        <ng-container *ngFor="let theme of getThemesFromIds(script.themeids); let last = last">
+                          {{theme.name}}<ng-container *ngIf="!last">, </ng-container>
+                        </ng-container>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm" *ngIf="script.open && script.visible" >
+                        <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'home'}">
+                          <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
+                        </a>
+                      </div>
+                      <div class="col-sm" *ngIf="script.visible && !statementOnlyScript(script)">
+                        <a routerLink='/allResponses/{{script._id}}'>
+                          <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View responses <i class='fa fa-link'></i></button>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-carousel>
+            </span>
+          </div>
+      </div>
+  </div>
+
+
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading8">
+      <button class="accordion-button collapsed text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8" aria-expanded="false" aria-controls="collapse8">
+          <span><h4>Locations</h4>
+            Paths related to organs of different locations</span>
+      </button>
+    </h2>
+    <div style="background-color: black;" id="collapse8" class="accordion-collapse collapse text-white" aria-labelledby="heading8">
+        <div class="accordion-body">
+          <div class="ng-autocomplete" style="width: 100%;">
+            <span>Search locations:</span>
+            <ng-autocomplete 
+              [data]="locationResults"
+              [searchKeyword]="keywordLocations"
+              (selected)='selectEventLocations($event)'
+              (inputChanged)='onChangeSearchLocations($event)'
+              (inputFocused)='onFocusedLocations($event)'
+              [itemTemplate]="itemTemplateLocations"
+              [notFoundTemplate]="notFoundTemplateLocations"
+              [placeholder]="placeholderTextLocations"
+              [historyListMaxNumber]="15"
+              [minQueryLength]="2">                                 
+            </ng-autocomplete>
+            <ng-template #itemTemplateLocations let-item>
+                <a href="javascript:void(0)">
+                  <span [innerHTML]="item.searchstring"></span>
+                </a>
+            </ng-template>
+            <ng-template #notFoundTemplateLocations let-notFound>
+            <div [innerHTML]="notFound"></div>
+            </ng-template>
+          </div>
+          <span *ngIf="model.selectedLocation">
+            <div class="row">
+              &nbsp;
+            </div>
+            <div class="col">
+              <h3 class="row text-left">{{model.selectedLocation.searchstring}}</h3>
+            </div>
+            <hr>
+            <ngb-carousel [showNavigationArrows]="model.selectedLocation.scripts.length > 1" [showNavigationIndicators]="model.selectedLocation.scripts.length > 1">
+              <ng-template ngbSlide *ngFor="let script of model.selectedLocation.scripts">
+                <div class="picsum-img-wrapper" style="height: 700px; text-align: center;" *ngFor="let artwork of getArtworkFromId(script.homepageartworkid);">
+                  <div class="col-md-6 col-sm-8 col-10 text-center mx-auto" style="width: 100%;">
+                    <img style="width: 100%;" src="{{artwork.url}}" (error)="handleMissingImage($event)">
+                  </div>
+                </div>
+                <div class="carousel-caption">
+                  <div class="row align-items-end">
+                    <h3 class="text-left overviewshadow">{{script.name}}</h3>
+                    <div class="text-left overviewshadow" *ngIf="script.description != ''">
+                      {{script.description}}
+                    </div>
+                    <figcaption class="text-left blockquote-footer text-white overviewshadow">{{script.author}}</figcaption>
+                    <div class="text-left overviewshadow" *ngIf="script.exhibitionids.length > 0"><strong>Exhibitions: </strong>
+                      <ng-container *ngFor="let exhibition of getExhibitionsFromIds(script.exhibitionids); let last = last">
+                        {{exhibition.name}}
+                        <ng-container *ngIf="!last">, </ng-container>
+                      </ng-container>
+                      <br/>
+                    </div>
+                    <div class="text-left overviewshadow" *ngIf="script.themeids.length > 0"><strong>Themes: </strong>
+                      <ng-container *ngFor="let theme of getThemesFromIds(script.themeids); let last = last">
+                        {{theme.name}}<ng-container *ngIf="!last">, </ng-container>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-sm" *ngIf="script.open && script.visible" >
+                      <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'home'}">
+                        <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
+                      </a>
+                    </div>
+                    <div class="col-sm" *ngIf="script.visible && !statementOnlyScript(script)">
+                      <a routerLink='/allResponses/{{script._id}}'>
+                        <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View responses <i class='fa fa-link'></i></button>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-carousel>
+          </span>
+        </div>
+    </div>
+</div>
+
     <div class="accordion-item">
         <h2 class="accordion-header" id="heading4">
             <button class="accordion-button collapsed text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
                 <span><h4>Themes</h4>
-                Scripts associated with different themes</span>
+                Paths related to different themes</span>
             </button>
         </h2>
         <div style="background-color: black;" id="collapse4" class="accordion-collapse collapse text-white" aria-labelledby="heading4">
@@ -317,7 +493,7 @@
                       <div class="row mb-3">
                         <div class="col-sm" *ngIf="script.open && script.visible">
                           <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'home'}">
-                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View script <i class='fa fa-link'></i></button>
+                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
                           </a>
                         </div>
                         <div class="col-sm" *ngIf="script.visible && !statementOnlyScript(script)">
@@ -337,7 +513,7 @@
       <h2 class="accordion-header" id="heading6">
           <button class="accordion-button collapsed text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
               <span><h4>Authors</h4>
-              Scripts created by different authors</span>
+              Paths created by different authors</span>
           </button>
       </h2>
       <div style="background-color: black;" id="collapse6" class="accordion-collapse collapse text-white" aria-labelledby="heading6">
@@ -403,7 +579,7 @@
                     <div class="row mb-3">
                       <div class="col-sm" *ngIf="script.open && script.visible">
                         <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'home'}">
-                          <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View script <i class='fa fa-link'></i></button>
+                          <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
                         </a>
                       </div>
                       <div class="col-sm" *ngIf="script.visible && !statementOnlyScript(script)">
@@ -423,13 +599,13 @@
         <h2 class="accordion-header" id="heading5">
           <button class="accordion-button collapsed text-white museum-colour" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
               <span><h4>Explore</h4>
-              More Deep Viewpoints scripts</span>
+              Search all paths</span>
           </button>
         </h2>
         <div style="background-color: black;" id="collapse5" class="accordion-collapse collapse text-white" aria-labelledby="heading5">
             <div class="accordion-body">
               <div class="ng-autocomplete" style="width: 100%;">
-                <span>Search scripts:</span>
+                <span>Search paths:</span>
                 <ng-autocomplete 
                   [data]="scriptResults"
                   [searchKeyword]="keywordScripts"
@@ -482,7 +658,7 @@
                       <div class="row">
                         <div class="col-sm" *ngIf="model.selectedOverviewScript.script.open && model.selectedOverviewScript.script.visible">
                           <a routerLink='/slowLooking/{{model.selectedOverviewScript.script._id}}' [queryParams]="{return:'home'}">
-                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View script <i class='fa fa-link'></i></button>
+                            <button class="btn btn-dark mt-3 overviewshadow" style="width: 10em; font-size: large; color: white; line-height: 1.2;">View path <i class='fa fa-link'></i></button>
                           </a>
                         </div>
                         <div class="col-sm" *ngIf="model.selectedOverviewScript.script.visible && !statementOnlyScript(model.selectedOverviewScript.script)">
@@ -515,3 +691,4 @@
 </div>
 <br/>
 <br/>
+<button (click)="foo()">do it</button>

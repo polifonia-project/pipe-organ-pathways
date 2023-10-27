@@ -36,10 +36,12 @@ export class Model {
 
     //selections from overview pape
     selectedArtwork = undefined;
+    selectedLocation = undefined;
     selectedTheme = undefined;
     selectedOverviewScript = undefined;
     selectedUser = undefined;
     selectedExhibition = undefined;
+    selectedBuilder = undefined;
 
     //script selection from script wizard (authoring)
     selectedScript: Script = undefined;

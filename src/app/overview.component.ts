@@ -39,6 +39,8 @@ export class OverviewComponent implements OnInit {
 
     userResults: {userid: string, name: string, searchstring: string, scripts: Script[]}[] = [];
     artworkResults: {artworkurl: string, name: string, artist: string, year: string, searchstring: string, scripts: Script[]}[] = [];
+    builderResults: {searchstring: string, scripts: Script[]}[] = [];
+    locationResults: {searchstring: string, scripts: Script[]}[] = [];
     themeResults: {themeid: string, name: string, description: string, searchstring: string, scripts: Script[]}[] = [];
     scriptResults: {searchstring: string, script: Script}[] = [];
     exhibitionResults: {exhibitionid: string, name: string, description: string, url: string, artwork: {name: string, artist: string, year: string, url: string}, searchstring: string, scripts: Script[]}[] = [];
@@ -59,6 +61,40 @@ export class OverviewComponent implements OnInit {
     
     onFocusedArtworks(e){
       // do something when input is focused
+    }
+
+    //location search
+    placeholderTextLocations = "City";
+    keywordLocations = 'searchstring';
+    selectEventLocations(item) {
+        // do something with selected item
+        this.model.selectedLocation = item;
+    }
+    
+    onChangeSearchLocations(val: string) {
+        // fetch remote data from here
+        // And reassign the 'data' which is binded to 'data' property.
+    }
+    
+    onFocusedLocations(e){
+        // do something when input is focused
+    }
+
+    //builder search
+    placeholderTextBuilders = "Builder";
+    keywordBuilders = 'searchstring';
+    selectEventBuilders(item) {
+        // do something with selected item
+        this.model.selectedBuilder = item;
+    }
+    
+    onChangeSearchBuilders(val: string) {
+        // fetch remote data from here
+        // And reassign the 'data' which is binded to 'data' property.
+    }
+    
+    onFocusedBuilders(e){
+        // do something when input is focused
     }
 
     //theme search
@@ -96,7 +132,7 @@ export class OverviewComponent implements OnInit {
     }
 
     //user search
-    placeholderTextUsers = "Script author";
+    placeholderTextUsers = "Path author";
     keywordUsers = 'searchstring';
     selectEventUsers(item) {
         // do something with selected item
@@ -113,7 +149,7 @@ export class OverviewComponent implements OnInit {
     }
 
     //script search
-    placeholderTextScripts = "Script title, description or author";
+    placeholderTextScripts = "Path title, description or author";
     keywordScripts = 'searchstring';
     selectEventScripts(item) {
         // do something with selected item
@@ -174,6 +210,44 @@ export class OverviewComponent implements OnInit {
                                 let themeind = this.themes.findIndex(x => x._id == themeid);
                                 if(themeind > -1) {
                                     this.themeResults.push({themeid: themeid, name: this.themes[themeind].name, description: this.themes[themeind].description, searchstring: this.themes[themeind].name+": "+this.themes[themeind].description, scripts: [script]});
+                                }
+                            }
+                        }
+                    }
+
+                    //add to the builder result array
+                    if(script.artworkids) {
+                        for(var artworkid of script.artworkids) {
+                            let artind = this.artworks.findIndex(x => x._id == artworkid);
+                            if(artind > -1) {
+                                let builderresind = this.builderResults.findIndex(x => x.searchstring == this.artworks[artind].artist);
+                                if(builderresind > -1) {
+                                    let scriptindex = this.builderResults[builderresind].scripts.findIndex(x => x._id == script._id);
+                                    if(scriptindex < 0) {
+                                        this.builderResults[builderresind].scripts.push(script);
+                                    }
+                                }
+                                else {
+                                    this.builderResults.push({searchstring: this.artworks[artind].artist, scripts: [script]});
+                                }
+                            }
+                        }
+                    }
+
+                    //add to the location result array
+                    if(script.artworkids) {
+                        for(var artworkid of script.artworkids) {
+                            let artind = this.artworks.findIndex(x => x._id == artworkid);
+                            if(artind > -1) {
+                                let locationresind = this.locationResults.findIndex(x => x.searchstring == this.artworks[artind].location);
+                                if(locationresind > -1) {
+                                    let scriptindex = this.locationResults[locationresind].scripts.findIndex(x => x._id == script._id);
+                                    if(scriptindex < 0) {
+                                        this.locationResults[locationresind].scripts.push(script);
+                                    }
+                                }
+                                else {
+                                    this.locationResults.push({searchstring: this.artworks[artind].location, scripts: [script]});
                                 }
                             }
                         }
@@ -321,5 +395,17 @@ export class OverviewComponent implements OnInit {
         }
         return true;
     }
-
+    foo() {
+        console.log(this.artworks);
+        console.log(this.locationResults);
+        console.log(this.builderResults);
+        console.log(this.scripts);
+        // let artworks = this.model.getArtworks();
+        // for(var artwork of artworks) {
+        //     let location = artwork.name.substring(0, artwork.name.indexOf(","));
+        //     artwork.location = location;
+        //     console.log(artwork);
+        //     this.model.saveArtwork(artwork);
+        // }
+    }
 }

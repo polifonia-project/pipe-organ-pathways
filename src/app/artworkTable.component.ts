@@ -108,7 +108,7 @@ export class ArtworkTableComponent {
 
     saveArtwork() {
         let artwork: Artwork = {type: "artwork", name: this.selectItem["name"], 
-        artist: this.selectItem["artist"], year: this.selectItem["year"], url: this.selectItem["filelocation"]};
+        artist: this.selectItem["artist"], year: this.selectItem["year"], url: this.selectItem["filelocation"], location: this.selectItem["location"]};
 
         //add current user_ID as owner
         let user_ID = this.currentuser.getUser()._id;

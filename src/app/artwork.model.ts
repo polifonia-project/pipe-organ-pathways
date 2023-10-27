@@ -8,6 +8,7 @@ export class Artwork {
         public year?: string,
         public fileLocation?: string,
         public url?: string,
-        public owner?: string
+        public owner?: string,
+        public location?: string
     ) {}
 }
