@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="col-4" style="min-width: 8em;">
-                <button *ngIf="editScriptStage==0" class="btn btn-secondary float-right mt-1" (click)="editScriptStage=0; showStageHelp=false; unselectScript();">Close script</button>
+                <button *ngIf="editScriptStage==0" class="btn btn-secondary float-right mt-1" (click)="editScriptStage=0; showStageHelp=false; unselectScript();">Close path</button>
             </div>
         </div>
         
@@ -78,11 +78,11 @@
             <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser==1" (click)="copyScript(script);">Copy path</button>
             <button class="btn btn-success float-right mt-3" style="clear: both;" *ngIf="script.removed && currentUser!=1" (click)="restoreScript(script); copyScriptMessage=false;">Restore path</button>
             <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser!=1" (click)="removeScript(script); copyScriptMessage=false;">Remove path</button>
-            <button class="btn btn-danger float-right mr-3 mt-3" (click)="confirmDelete(script._id); copyScriptMessage=false;">Delete script</button>
+            <button class="btn btn-danger float-right mr-3 mt-3" (click)="confirmDelete(script._id); copyScriptMessage=false;">Delete path</button>
         </div>
         <div class="col-md-1" style="min-width: 16em;" *ngIf="!isAdmin()">
             <button class="btn btn-secondary float-right" (click)="selectScript(script._id); showup(); copyScriptMessage=false;">Open path</button>
-            <button class="btn btn-success float-right mt-3" style="clear: both;" (click)="copyScript(script);">Copy script</button>
+            <button class="btn btn-success float-right mt-3" style="clear: both;" (click)="copyScript(script);">Copy path</button>
             <button class="btn btn-danger float-right mr-3 mt-3" (click)="confirmRemove(script._id); copyScriptMessage=false;">Remove path</button>
         </div>
     </div>
@@ -90,10 +90,10 @@
         <div class="alert alert-success fadeout mt-3">{{copyScriptMessageText}}</div>
     </span>
     <div class="row" *ngIf="removeConfirmation_Id==script._id">
-        <div class="alert alert-danger" role="alert"><strong>Are you sure you want to remove this script?</strong> <span><button class="btn btn-danger ml-2" (click)="removeScript(script)">OK</button> <button class="btn btn-secondary ml-2" (click)="removeConfirmation_Id=''">Cancel</button></span></div>
+        <div class="alert alert-danger" role="alert"><strong>Are you sure you want to remove this path?</strong> <span><button class="btn btn-danger ml-2" (click)="removeScript(script)">OK</button> <button class="btn btn-secondary ml-2" (click)="removeConfirmation_Id=''">Cancel</button></span></div>
     </div>
     <div class="row" *ngIf="deleteConfirmation_Id==script._id">
-        <div class="alert alert-danger" role="alert"><strong>Are you sure you want to delete this script?</strong> <span><button class="btn btn-danger ml-2" (click)="deleteScript(script._id)">OK</button> <button class="btn btn-secondary ml-2" (click)="deleteConfirmation_Id=''">Cancel</button></span></div>
+        <div class="alert alert-danger" role="alert"><strong>Are you sure you want to delete this path?</strong> <span><button class="btn btn-danger ml-2" (click)="deleteScript(script._id)">OK</button> <button class="btn btn-secondary ml-2" (click)="deleteConfirmation_Id=''">Cancel</button></span></div>
     </div>
     <div class="row">
         <div class="col-12">
@@ -112,8 +112,8 @@
                 <div class="col-sm">
                     <span *ngFor="let artwork of getArtworksFromIds(script.name, script.artworkids, script);">
                         <span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, 
-                        <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span>, 
-                        <span>{{artwork.year}}</span><br/>
+                        <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span><br/>
+                        <!-- , <span>{{artwork.year}}</span> -->
                     </span>
                 </div>
             </div>
@@ -143,8 +143,8 @@
                     <span *ngFor="let artwork of getArtworkAsList(script.homepageartworkid);">
                         <ng-container *ngIf="artwork != undefined">
                             <span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, 
-                            <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span>, 
-                            <span>{{artwork.year}}</span>
+                            <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span>
+                            <!-- ,<span>{{artwork.year}}</span> -->
                         </ng-container>
                     </span>
                 </div>
@@ -157,7 +157,7 @@
                     <a routerLink='/slowLooking/{{script._id}}' [queryParams]="{return:'scripts'}">
                         <button class="btn btn-light mr-3">View path <i class='fa fa-link'></i></button>
                     </a>
-                    <button class="btn btn-light" ngbPopover="{{scriptURL(script)}}" popoverTitle="Script URL copied:" ngxClipboard [cbContent]='scriptURL(script)'>Copy path URL <i class="fa fa-clone" aria-hidden="true"></i></button>
+                    <button class="btn btn-light" ngbPopover="{{scriptURL(script)}}" popoverTitle="Path URL copied to clipboard" ngxClipboard [cbContent]='scriptURL(script)'>Copy path URL <i class="fa fa-clone" aria-hidden="true"></i></button>
                 </div>
             </div>
             <div class="row mt-1" *ngIf="script.stages.length > 0 && !statementOnlyScript(script)">
@@ -168,7 +168,7 @@
                     <a routerLink='/allResponses/{{script._id}}'>
                         <button class="btn btn-light mr-3" (click)="reloadActivities();">View responses <i class='fa fa-link'></i></button>
                     </a>
-                    <button class="btn btn-light" ngbPopover="{{responsesURL(script)}}" popoverTitle="Script URL copied:" ngxClipboard [cbContent]='responsesURL(script)'>Copy responses URL <i class="fa fa-clone" aria-hidden="true"></i></button>
+                    <button class="btn btn-light" ngbPopover="{{responsesURL(script)}}" popoverTitle="Responses URL copied to clipboard" ngxClipboard [cbContent]='responsesURL(script)'>Copy responses URL <i class="fa fa-clone" aria-hidden="true"></i></button>
                 </div>
             </div>
             <div class="row mt-1" *ngIf="isAdmin()">
@@ -194,7 +194,7 @@
                         />
                         <label class="form-check-label">Closed&nbsp;&nbsp;</label>
                     </div>
-                    <div class = "help-block">Select Open to allow users to respond to this script, or Closed to prevent any responses. Open paths can be accessed directly online even if they are Private.</div>
+                    <div class = "help-block">Select Open to allow users to respond to this path, or Closed to prevent any responses. Open paths can be accessed directly online even if they are Private.</div>
                 </div>
             </div>
             <div class="row mt-1" *ngIf="isAdmin()">
@@ -273,7 +273,7 @@
                         />
                         <label class="form-check-label">Not featured&nbsp;&nbsp;</label>
                     </div>
-                    <div class = "help-block">Featured scripts are shown in the top panel on the homepage.</div>
+                    <div class = "help-block">Featured paths are shown in the top panel on the homepage.</div>
                 </div>
             </div>
         </div>
@@ -468,7 +468,7 @@
                                     Select organs for your path from the Organs tab
                                 </span>
                                 <span *ngFor="let artwork of getArtworksFromIds(stage.title, stage.includeartworks, model.selectedScript, stage);">
-                                    <span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span>, {{artwork.year}}<br/>
+                                    <span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span><br/>
                                 </span>
                             </div>
                         </div>
@@ -628,9 +628,7 @@
                                                 <div class="col-sm-12"><span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span></div>
                                                 <div class="col-sm-12">{{artwork.year}}</div>
                                             </label> -->
-                                            <label class="form-check-label"><span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span>, {{artwork.year}} </label>
-                                        </td>
-                                        <br/>
+                                            <label class="form-check-label"><span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span> </label>&nbsp;<button popoverTitle="Build history copied to clipboard" ngbPopover="You can paste it into the stage of your path" ngxClipboard [cbContent]='getBuildHistoryForClipboard(artwork)' class="btn btn-light py-0">Copy build history <i class="fa fa-clone" aria-hidden="true"></i></button>
                                     </tr>
                                 </table>
                             </div>
@@ -887,7 +885,7 @@
                                 [(ngModel)] = "model.selectedScript.homepageartworkid"
                                 (change) = "saveScript(model.selectedScript)"
                                 />
-                                <label class="form-check-label"><span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span>, {{artwork.year}} </label>
+                                <label class="form-check-label"><span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span></label>
                             </div>
                         </div>
                     </div>
