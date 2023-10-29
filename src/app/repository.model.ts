@@ -59,6 +59,8 @@ export class Model {
     private dbCollectionArtworks: CollectionArtwork[] = this.extraArtworks.artworks;
     // new Array<CollectionArtwork>();
 
+    //build history of selected artwork (organ)
+    private dbBuildHistory: {year: string, builder: string, tasks: string}[] = [];
 
     constructor(private dbDataSource: RestDataSource) {
 
@@ -71,6 +73,19 @@ export class Model {
         this.dbDataSource.getScriptSetData().subscribe(data => {this.dbScriptSets = data});
         this.dbDataSource.getCollection().subscribe(val => {this.dbCollectionArtworks.push(val)});
 
+    }
+
+    // Build history
+    getBuildHistory(artworkid) {
+        this.dbDataSource.getBuildHistory(artworkid).subscribe(val => this.dbBuildHistory.push(val));
+    }
+
+    resetBuildHistory() {
+        this.dbBuildHistory = [];
+    }
+
+    getDBBuildHistory() {
+        return this.dbBuildHistory;
     }
 
     // Collection

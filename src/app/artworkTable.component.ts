@@ -3,6 +3,7 @@ import { Artwork } from "./artwork.model";
 import { ConfigSettings } from "./config";
 import { CurrentUser } from "./currentUser.service";
 import { Model } from "./repository.model";
+import { Observable } from "rxjs";
 
 
 @Component({
@@ -64,11 +65,13 @@ export class ArtworkTableComponent {
   
   
     selectEvent(item) {
-        this.reloadArtworks()
+        this.reloadArtworks();
+        this.model.resetBuildHistory();
         // do something with selected item
         this.selected = true;
         this.selectItem = item;
-
+        console.log("****",item.artworkuri);
+        this.getBuildHistory(item.artworkuri);
     }
     
     onChangeSearch(val: string) {
@@ -107,8 +110,8 @@ export class ArtworkTableComponent {
     }
 
     saveArtwork() {
-        let artwork: Artwork = {type: "artwork", name: this.selectItem["name"], 
-        artist: this.selectItem["artist"], year: this.selectItem["year"], url: this.selectItem["filelocation"], location: this.selectItem["location"]};
+        let artwork: Artwork = {type: "artwork", name: this.selectItem["name"], buildHistory: this.getDBBuildHistory(),
+        artist: this.selectItem["artist"], year: this.selectItem["year"], url: this.selectItem["filelocation"], location: this.selectItem["location"], artworkuri: this.selectItem["artworkuri"]};
 
         //add current user_ID as owner
         let user_ID = this.currentuser.getUser()._id;
@@ -140,4 +143,18 @@ export class ArtworkTableComponent {
     getScriptsOfAnArtwork(_id: string) {
         return this.model.getScriptsOfAnArtwork(_id);
     }
+
+    getBuildHistory(artworkid) {
+        console.log(this.selectItem);
+        this.model.getBuildHistory(artworkid);
+    }
+
+    getDBBuildHistory() {
+        return this.model.getDBBuildHistory();
+    }
+
+    splitTextOnSeparator(text: string) {
+        return text.split("|");
+    }
+
 }

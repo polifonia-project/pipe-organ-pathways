@@ -188,7 +188,11 @@ import { ScriptSet } from "./scriptSet.model";
             this.http.get<any>(this.collectionURL).subscribe(data => {
                 let resarray:  Array<CollectionArtwork> = [];
                 for(var item of data["results"]["bindings"]) {
-                    observer.next(new CollectionArtwork(item["title"]["value"], item["creatorname"]["value"], item["year"]["value"], this.configSettings.baseURL+"assets/img/350x350/"+item["artworkurl"]["value"]+".jpg", item["title"]["value"]+', '+item["creatorname"]["value"]+', '+item["year"]["value"], item["location"]["value"]));
+                    let collectionItem: CollectionArtwork = {name: item["title"]["value"], artist: item["creatorname"]["value"], year:item["year"]["value"],
+                    filelocation: this.configSettings.baseURL+"assets/img/350x350/"+item["artworkurl"]["value"]+".jpg", searchstring: item["title"]["value"]+', '+item["creatorname"]["value"],
+                    location: item["location"]["value"], artworkuri: item["artwork"]["value"]
+                    };
+                    observer.next(collectionItem);
                 }
                 observer.complete();
             },
@@ -200,6 +204,61 @@ import { ScriptSet } from "./scriptSet.model";
         });
         return obs;
     }
+
+    private buildQueryPt1 = `PREFIX core: <https://w3id.org/polifonia/ontology/core/>
+    PREFIX organs: <http://w3id.org/polifonia/resource/organs/>
+    PREFIX organ: <http://w3id.org/polifonia/ontology/organs/>
+    
+    SELECT ?start (?agentLabel as ?builder) (group_concat(?taskLabel;separator="|") as ?tasks)
+    WHERE { 
+      BIND(<`;
+
+    private buildQueryPt2 = `> as ?organ) .
+     
+     ?organ core:isDescribedBy ?project .
+      
+     ?project core:hasTimeInterval ?timeInterval .
+     ?timeInterval rdf:type core:TimeInterval .
+     ?timeInterval core:startTime ?start .
+     ?timeInterval core:endTime ?end .
+      
+     ?project core:hasAgentRole ?agentRole .
+     ?agentRole core:hasRole organs:roleBuilder .
+     ?agentRole core:hasAgent ?agent .
+     ?agent rdfs:label ?agentLabel .
+    
+      
+     ?project core:definesTask ?task .
+     ?task rdfs:label ?taskLabel .
+      
+    FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
+     
+    } 
+    GROUP BY ?project ?agent ?agentLabel ?start ?end
+    ORDER BY ASC(?start)
+    `;
+
+    getBuildHistory(artworkuri: string): Observable<any> {
+        let buildURL = "http://127.0.0.1:9999/blazegraph/sparql?query="+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
+        const obs = new Observable((observer) => {
+            this.http.get<any>(buildURL).subscribe(data => {
+                for(var item of data["results"]["bindings"]) {
+                    let buildItem: {year: string, builder: string, tasks: string} = {year: item["start"]["value"], 
+                    builder: item["builder"]["value"],
+                    tasks: item["tasks"]["value"]
+                    };
+                    observer.next(buildItem);
+                }
+                observer.complete();
+            },
+                error=>{
+                    observer.complete();
+                }
+            );
+        });
+        return obs;
+    }
+
 }
 
 

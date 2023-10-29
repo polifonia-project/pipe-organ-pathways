@@ -9,6 +9,8 @@ export class Artwork {
         public fileLocation?: string,
         public url?: string,
         public owner?: string,
-        public location?: string
+        public location?: string,
+        public artworkuri?: string,
+        public buildHistory?: {year: string, builder: string, tasks: string}[]
     ) {}
 }

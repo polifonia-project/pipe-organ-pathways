@@ -25,6 +25,40 @@ export class ScriptWizardComponent {
 
     constructor(public currentuser: CurrentUser, public model: Model){}
 
+    //get build history for clipboard
+    getBuildHistoryForClipboard(artwork: Artwork): string {
+        if(!artwork.buildHistory.length) {
+            return "";
+        }
+        let buildHistory: string = `<table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Year</th>
+                <th scope="col">Builder</th>
+                <th scope="col">Tasks</th>
+            </tr>
+        </thead>
+        <tbody>
+        `;
+        for(var historyItem of artwork.buildHistory) {
+            buildHistory = buildHistory.concat(
+            `   <tr>
+                <td>`,historyItem.year,`</td>
+                <td>`,historyItem.builder,`</td>
+                <td>`,this.splitTasks(historyItem.tasks),`</td>
+            </tr>
+        `
+            );
+        }
+        return buildHistory+`</tbody>
+</table>`;
+    }
+
+    splitTasks(tasks: string) {
+        let textArray = tasks.split("|");
+        return textArray.join("<br/>");
+    }
+
     //for filtering personal artwork collection
     searchText = '';
 
@@ -180,7 +214,7 @@ export class ScriptWizardComponent {
 
     addScript() {
         let newscript = new Script();
-        newscript.name = "Untitled script";
+        newscript.name = "Untitled path";
         newscript.open = true;
         newscript.visible = false;
         newscript.archived = false;
