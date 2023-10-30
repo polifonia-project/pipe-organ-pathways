@@ -179,7 +179,7 @@ import { ScriptSet } from "./scriptSet.model";
 
     //Collection query
 
-    private collectionURL = "http://127.0.0.1:9999/blazegraph/sparql?query="+this.configSettings.collectionQuery;
+    private collectionURL = "http://127.0.0.1:9999/bigdata/sparql?query="+this.configSettings.collectionQuery;
 
     // private collectionURL = "https://api2.mksmart.org/query/" + this.configSettings.collectionDatasetUUID + "/sparql?query=" + this.configSettings.collectionQuery;
       
