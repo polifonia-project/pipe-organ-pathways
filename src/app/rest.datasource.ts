@@ -179,9 +179,7 @@ import { ScriptSet } from "./scriptSet.model";
 
     //Collection query
 
-    private collectionURL = "http://127.0.0.1:9999/bigdata/sparql?query="+this.configSettings.collectionQuery;
-
-    // private collectionURL = "https://api2.mksmart.org/query/" + this.configSettings.collectionDatasetUUID + "/sparql?query=" + this.configSettings.collectionQuery;
+    private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
       
     getCollection(): Observable<CollectionArtwork> {
         const obs = new Observable((observer) => {
@@ -206,6 +204,7 @@ import { ScriptSet } from "./scriptSet.model";
     }
 
     private buildQueryPt1 = `PREFIX core: <https://w3id.org/polifonia/ontology/core/>
+    PREFIX core2: <https://w3id_org/polifonia/ontology/core/>
     PREFIX organs: <http://w3id.org/polifonia/resource/organs/>
     PREFIX organ: <http://w3id.org/polifonia/ontology/organs/>
     
@@ -215,20 +214,20 @@ import { ScriptSet } from "./scriptSet.model";
 
     private buildQueryPt2 = `> as ?organ) .
      
-     ?organ core:isDescribedBy ?project .
+     ?organ core2:isDescribedBy ?project .
       
-     ?project core:hasTimeInterval ?timeInterval .
+     ?project core2:hasTimeInterval ?timeInterval .
      ?timeInterval rdf:type core:TimeInterval .
-     ?timeInterval core:startTime ?start .
-     ?timeInterval core:endTime ?end .
+     ?timeInterval core2:startTime ?start .
+     ?timeInterval core2:endTime ?end .
       
-     ?project core:hasAgentRole ?agentRole .
-     ?agentRole core:hasRole organs:roleBuilder .
-     ?agentRole core:hasAgent ?agent .
+     ?project core2:hasAgentRole ?agentRole .
+     ?agentRole core2:hasRole organs:roleBuilder .
+     ?agentRole core2:hasAgent ?agent .
      ?agent rdfs:label ?agentLabel .
     
       
-     ?project core:definesTask ?task .
+     ?project core2:definesTask ?task .
      ?task rdfs:label ?taskLabel .
       
     FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
@@ -239,7 +238,7 @@ import { ScriptSet } from "./scriptSet.model";
     `;
 
     getBuildHistory(artworkuri: string): Observable<any> {
-        let buildURL = "http://127.0.0.1:9999/blazegraph/sparql?query="+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
+        let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
         const obs = new Observable((observer) => {
             this.http.get<any>(buildURL).subscribe(data => {
                 for(var item of data["results"]["bindings"]) {
