@@ -193,7 +193,7 @@ export class OverviewComponent implements OnInit {
                                     }
                                 }
                                 else {
-                                    this.artworkResults.push({artworkurl: this.artworks[artind].url, name: this.artworks[artind].name, artist: this.artworks[artind].artist, year: this.artworks[artind].year, searchstring: this.artworks[artind].name+", "+this.artworks[artind].artist+", "+this.artworks[artind].year, scripts: [script]});
+                                    this.artworkResults.push({artworkurl: this.artworks[artind].url, name: this.artworks[artind].name, artist: this.artworks[artind].artist, year: this.artworks[artind].year, searchstring: this.artworks[artind].name+", "+this.artworks[artind].artist, scripts: [script]});
                                 }
                             }
                         }
