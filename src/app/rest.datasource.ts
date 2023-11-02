@@ -187,7 +187,7 @@ import { ScriptSet } from "./scriptSet.model";
                 let resarray:  Array<CollectionArtwork> = [];
                 for(var item of data["results"]["bindings"]) {
                     let collectionItem: CollectionArtwork = {name: item["title"]["value"], artist: item["creatorname"]["value"], year:item["year"]["value"],
-                    filelocation: this.configSettings.baseURL+"assets/img/350x350/"+item["artworkurl"]["value"]+".jpg", searchstring: item["title"]["value"]+', '+item["creatorname"]["value"],
+                    filelocation: this.configSettings.imageURL+item["artworkurl"]["value"]+".jpg", searchstring: item["title"]["value"]+', '+item["creatorname"]["value"],
                     location: item["location"]["value"], artworkuri: item["artwork"]["value"]
                     };
                     observer.next(collectionItem);
