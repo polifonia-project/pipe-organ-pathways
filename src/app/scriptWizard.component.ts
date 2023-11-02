@@ -87,7 +87,7 @@ export class ScriptWizardComponent {
 
     newStageMessage: boolean = false;
 
-    newStageMessageText: string = "New stage added to the end of your script";
+    newStageMessageText: string = "New stage added to the end of your path";
 
     copyStageMessage: boolean = false;
 
@@ -97,7 +97,7 @@ export class ScriptWizardComponent {
 
     copyScriptMessage: boolean = false;
 
-    copyScriptMessageText: string = "Script copied"
+    copyScriptMessageText: string = "Path copied"
 
     copiedScript: number = undefined;
 

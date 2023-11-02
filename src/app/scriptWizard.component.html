@@ -300,7 +300,7 @@
                 </div>
             </div>
             <div class="alert alert-info" *ngIf="getArtworks(model.selectedScript).length == 0">
-                Use the <strong>Artworks</strong> option from the top pull-down menu to add artworks to your personal collection. These can then be added to your scripts.
+                Use the <strong>Artworks</strong> option from the top pull-down menu to add artworks to your personal collection. These can then be added to your paths.
             </div>
             <div class="row itemsBlock">
                 <div *ngFor="let artwork of getArtworks(model.selectedScript) | appFilter: searchText" class="col-md-4 col-sm-6 col-12 pb-3">
