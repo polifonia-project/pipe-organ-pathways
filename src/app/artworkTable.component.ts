@@ -70,7 +70,6 @@ export class ArtworkTableComponent {
         // do something with selected item
         this.selected = true;
         this.selectItem = item;
-        console.log("****",item.artworkuri);
         this.getBuildHistory(item.artworkuri);
     }
     
@@ -145,7 +144,6 @@ export class ArtworkTableComponent {
     }
 
     getBuildHistory(artworkid) {
-        console.log(this.selectItem);
         this.model.getBuildHistory(artworkid);
     }
 
