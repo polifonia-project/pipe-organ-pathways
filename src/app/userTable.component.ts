@@ -48,7 +48,6 @@ export class UserTableComponent {
     }
 
     addUser(user: User, existingUser: boolean) {
-        console.log(existingUser);
         //check if username already taken
         if(user.id == undefined && this.usernameTaken(user)) {
             this.duplicateUser = true;
