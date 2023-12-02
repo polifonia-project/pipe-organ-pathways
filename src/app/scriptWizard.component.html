@@ -629,6 +629,8 @@
                                                 <div class="col-sm-12">{{artwork.year}}</div>
                                             </label> -->
                                             <label class="form-check-label"><span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span>, <span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span> </label>&nbsp;<button popoverTitle="Build history copied to clipboard" ngbPopover="You can paste it into the stage of your path" ngxClipboard [cbContent]='getBuildHistoryForClipboard(artwork)' class="btn btn-light py-0">Copy build history <i class="fa fa-clone" aria-hidden="true"></i></button>
+                                        </td>
+                                        <br/>
                                     </tr>
                                 </table>
                             </div>
@@ -701,7 +703,7 @@
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         </td>
                                         <td class="align-middle">
-                                            <div class="form-check form-check-inline">
+                                            <div *ngIf="stage.question.choice" class="form-check form-check-inline">
                                                 <input
                                                     class="form-check-input"
                                                     type="checkbox"
@@ -711,7 +713,7 @@
                                             </div>          
                                         </td>
                                         <td class="align-top">
-                                            <label class="form-check-label">Multiple selections</label>
+                                            <label *ngIf="stage.question.choice" class="form-check-label">Multiple selections</label>
                                         </td>
                                     </tr>
                                 </table>
@@ -751,7 +753,7 @@
                                                             /> 
                                                             <label class="form-check-label ml-2">Multiple choice</label>
                                                         </div>
-                                                        <div class="col">
+                                                        <div class="col" *ngIf="stage.questions[index].choice">
                                                             <input
                                                             class="form-check-input"
                                                             type="checkbox"
@@ -894,8 +896,9 @@
             </ng-template>
         </li>
         <li ngbNavItem>
-            <a ngbNavLink><strong>Shuffle</strong></a>
+            <a ngbNavLink><strong>Advanced</strong></a>
             <ng-template ngbNavContent>
+                <h4 class="mt-3">Shuffle</h4>
                 <p>
                     Shuffle selected stages each time the path is used.
                 </p>
@@ -909,6 +912,24 @@
                         />
                         <label class="form-check-label">{{i+1}} {{stage.title}} <strong>Type:</strong> {{stage.stagetype}}</label>
                     </div>
+                    <h4 class="mt-3">Required</h4>
+                    <p>
+                        Require a response to the prompt or prompts within selected stages (question, multiquestion, story) before moving to the next stage.
+                    </p>
+                    <ng-container *ngFor="let stage of model.selectedScript.stages; let i = index">
+                        <ng-container *ngIf="stage.stagetype != 'statement'">
+                            <div class="form-check mr-1 pb-2 ml-2">
+                                <input 
+                                class="form-check-input"
+                                type="checkbox"
+                                [value]=stage.id
+                                [(ngModel)] = model.selectedScript.stages[i].required
+                                (change) = "saveScript(model.selectedScript)"
+                                />
+                                <label class="form-check-label">{{i+1}} {{stage.title}} <strong>Type:</strong> {{stage.stagetype}}</label>
+                            </div>
+                        </ng-container>
+                    </ng-container>
                 <br/><br/>
             </ng-template>
         </li>
