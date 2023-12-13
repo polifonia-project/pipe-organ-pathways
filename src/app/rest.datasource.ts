@@ -203,16 +203,16 @@ import { ScriptSet } from "./scriptSet.model";
         return obs;
     }
 
-    private buildQueryPt1 = `PREFIX core: <https://w3id.org/polifonia/ontology/core/>
-    PREFIX core2: <https://w3id_org/polifonia/ontology/core/>
-    PREFIX organs: <http://w3id.org/polifonia/resource/organs/>
-    PREFIX organ: <http://w3id.org/polifonia/ontology/organs/>
+    private buildQueryPt1 = `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
+    PREFIX core2: %3Chttps://w3id_org/polifonia/ontology/core/%3E
+    PREFIX organs: %3Chttp://w3id.org/polifonia/resource/organs/%3E
+    PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
     
     SELECT ?start (?agentLabel as ?builder) (group_concat(?taskLabel;separator="|") as ?tasks)
     WHERE { 
-      BIND(<`;
+      BIND(%3C`;
 
-    private buildQueryPt2 = `> as ?organ) .
+    private buildQueryPt2 = `%3E as ?organ) .
      
      ?organ core2:isDescribedBy ?project .
       
