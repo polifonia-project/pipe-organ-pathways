@@ -1,7 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, QueryList, ViewChildren  } from "@angular/core";
 import { CurrentUser } from "./currentUser.service";
 import { Model } from "./repository.model";
 import { User } from "./user.model";
+import {
+    SortableHeaderDirective,
+    SortEvent,
+    compare,
+  } from './sortable-header.directive';
 
 @Component({
     selector: "paUserTable",
@@ -23,6 +28,8 @@ export class UserTableComponent {
         }
     }
 
+    searchText = "";
+    
     editrow: string = "";
 
     tableEditing: boolean = false;
@@ -46,6 +53,12 @@ export class UserTableComponent {
         let sortedUsers = users.sort((a, b) => (a.id < b.id) ? -1 : 1);
         return sortedUsers;
     }
+
+    data: Array<User> = this.getUsers();
+    users: Array<User> = this.getUsers();
+
+    @ViewChildren(SortableHeaderDirective)
+    headers: QueryList<SortableHeaderDirective>;
 
     addUser(user: User, existingUser: boolean) {
         //check if username already taken
@@ -92,5 +105,25 @@ export class UserTableComponent {
 
     deleteUser(_id: string) {
         this.model.deleteUser(_id);
+    }
+
+    onSort({ column, direction }: SortEvent) {
+        console.log(column, direction);
+        // resetting other headers
+        this.headers.forEach((header) => {
+          if (header.sortable !== column) {
+            header.direction = '';
+          }
+        });
+    
+        // sorting 
+        if (direction === '' || column === '') {
+          this.users = this.data;
+        } else {
+          this.users = [...this.data].sort((a, b) => {
+            const res = compare(a[column], b[column]);
+            return direction === 'asc' ? res : -res;
+          });
+        }
     }
 }
