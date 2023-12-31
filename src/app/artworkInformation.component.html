@@ -1,0 +1,124 @@
+<ng-container *ngIf="artworks.length > 0">
+    <div style="width:100%" class="bg-light mt-2 mb-2">
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-dark float-right"
+            (click)="hideBuildHistory = !hideBuildHistory"
+            [attr.aria-expanded]="!hideBuildHistory"
+            aria-controls="collapseExample"><i class="fa fa-info"></i> Build history</button>
+        </div>
+    </div>
+    <div [ngbCollapse]="hideBuildHistory" class="collapse navbar-collapse mt-2">
+        <ng-container *ngIf="artworks.length > 1">
+            <select class="form-select bg-light" aria-label="Default select example" [(ngModel)]="artworkSelection">
+                <ng-container *ngFor="let artwork of artworks; let j = index">
+                    <option [ngValue]="j">{{artwork.name}}</option>
+                </ng-container>
+            </select>
+        </ng-container>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Year</th>
+                    <th scope="col">Builder</th>
+                    <th scope="col">Tasks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of artworks[artworkSelection].buildHistory;">
+                    <td>{{item.year}}</td>
+                    <td>{{item.builder}}</td>
+                    <td>
+                        <ng-container *ngFor="let task of splitTextOnSeparator(item.tasks);">
+                            {{task}}<br/>
+                        </ng-container>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <div style="width:100%" class="bg-light mb-2">
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-dark float-right"
+            (click)="hideDispositionHistory = !hideDispositionHistory"
+            [attr.aria-expanded]="!hideDispositionHistory"
+            aria-controls="collapseExample"><i class="fa fa-info"></i> Disposition</button>
+        </div>
+    </div>
+    <div [ngbCollapse]="hideDispositionHistory" class="collapse navbar-collapse mt-2">
+        <ng-container *ngIf="artworks.length == 1 && artworks[0].dispositions.length > 1"> 
+            <div *ngFor="let disposition of artworks[0].dispositions.slice(0,2); let i = index" class="col-6" style="display: inline-block; vertical-align: top;">
+                <ng-container *ngIf="artworks[0].dispositions.length == 1">
+                    <p class="lh-sm">{{artworks[0].dispositions[0].parthoodname}}</p>
+                </ng-container>
+                <ng-container *ngIf="artworks[0].dispositions.length > 1">
+                    <select class="form-select bg-light" aria-label="Default select example" [(ngModel)]="dispositionSelection[i]">
+                        <ng-container *ngFor="let d of artworks[0].dispositions; let j = index">
+                            <option [ngValue]="j">{{d.parthoodname}}</option>
+                        </ng-container>
+                    </select>
+                </ng-container>
+                <ng-container *ngFor="let division of artworks[0].dispositions[dispositionSelection[i]].divisions">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="2">
+                                    {{division.divisionname}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let stop of division.stops">
+                                <td>{{stop.stopname}}</td>
+                                <td>{{stop.stopspecification}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-container>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!(artworks.length == 1 && artworks[0].dispositions.length > 1)">
+            <div *ngFor="let artwork of artworks.slice(0,2); let i = index" class="col-6" style="display: inline-block; vertical-align: top;">
+                <ng-container *ngIf="artworks.length > 1">
+                    <select class="form-select bg-light" aria-label="Default select example" [(ngModel)]="artworkSelectionList[i].artwork" (change)="artworkSelectionList[i].disposition=0">
+                        <ng-container *ngFor="let artwork of artworks; let j = index">
+                            <option [ngValue]="j">{{artwork.name}}</option>
+                        </ng-container>
+                    </select>
+                </ng-container>
+                <ng-container *ngIf="artworks[artworkSelectionList[i].artwork].dispositions.length == 1">
+                    <p class="lh-sm">{{artworks[artworkSelectionList[i].artwork].dispositions[0].parthoodname}}</p>
+                </ng-container>
+                <ng-container *ngIf="artworks[artworkSelectionList[i].artwork].dispositions.length > 1">
+                    <select class="form-select bg-light" aria-label="Default select example" [(ngModel)]="artworkSelectionList[i].disposition">
+                        <ng-container *ngFor="let disposition of artworks[artworkSelectionList[i].artwork].dispositions; let k = index">
+                            <option [ngValue]="k">{{disposition.parthoodname}}</option>
+                        </ng-container>
+                    </select>
+                </ng-container>
+                <ng-container *ngFor="let division of artworks[artworkSelectionList[i].artwork].dispositions[artworkSelectionList[i].disposition].divisions">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="2">
+                                    {{division.divisionname}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let stop of division.stops">
+                                <td>{{stop.stopname}}</td>
+                                <td>{{stop.stopspecification}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-container>
+            </div>
+        </ng-container>
+    </div>
+    </div>
+</ng-container>
+
+

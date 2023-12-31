@@ -79,7 +79,6 @@
             </ng-template>
         </div>
     </div>
-
     <div *ngIf="selected" class="pb-3">
         <div class="row align-items-end mb-3">
             <div class="col-md-4 col-sm-6">
@@ -95,26 +94,81 @@
                 <button class="float-right btn btn-success" (click)="saveArtwork(); selected=false;">Add</button>
             </div>
         </div>
-        <table class="table" *ngIf="getDBBuildHistory().length">
-            <thead>
-                <tr>
-                    <th scope="col">Year</th>
-                    <th scope="col">Builder</th>
-                    <th scope="col">Tasks</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of getDBBuildHistory();">
-                    <td>{{item.year}}</td>
-                    <td>{{item.builder}}</td>
-                    <td>
-                        <ng-container *ngFor="let task of splitTextOnSeparator(item.tasks);">
-                            {{task}}<br/>
-                        </ng-container>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="width:100%" class="bg-light mt-2 mb-2">
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-dark float-right"
+                (click)="hideBuildHistory = !hideBuildHistory"
+                [attr.aria-expanded]="!hideBuildHistory"
+                aria-controls="collapseExample"><i class="fa fa-info"></i> Build history</button>
+            </div>
+        </div>
+        <div [ngbCollapse]="hideBuildHistory" class="collapse navbar-collapse mt-2" *ngIf="getDBBuildHistory().length">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Year</th>
+                        <th scope="col">Builder</th>
+                        <th scope="col">Tasks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of getDBBuildHistory();">
+                        <td>{{item.year}}</td>
+                        <td>{{item.builder}}</td>
+                        <td>
+                            <ng-container *ngFor="let task of splitTextOnSeparator(item.tasks);">
+                                {{task}}<br/>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+		</div>
+        </div>
+        <div style="width:100%" class="bg-light mt-2 mb-2">
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-dark float-right"
+                (click)="hideDispositionHistory = !hideDispositionHistory"
+                [attr.aria-expanded]="!hideDispositionHistory"
+                aria-controls="collapseExample"><i class="fa fa-info"></i> Disposition</button>
+            </div>
+        </div>
+        <div [ngbCollapse]="hideDispositionHistory" class="collapse navbar-collapse mt-2"  *ngIf="getDBDispositionInfo().length">
+            <!-- <div class="row" style="display: inline-block; vertical-align: top; width: 100%;"> -->
+                <div *ngFor="let disposition of getDBDispositionInfo().slice(0,2); let i = index" class="col-6" style="display: inline-block; vertical-align: top;">
+                    <ng-container *ngIf="getDBDispositionInfo().length == 1">
+                        <p class="lh-sm">{{getDBDispositionInfo()[0].parthoodname}}</p>
+                    </ng-container>
+                    <ng-container *ngIf="getDBDispositionInfo().length > 1">
+                        <select class="form-select bg-light" aria-label="Default select example" [(ngModel)]="dispositionSelection[i]">
+                            <ng-container *ngFor="let d of getDBDispositionInfo(); let j = index">
+                                <option [ngValue]="j">{{d.parthoodname}}</option>
+                            </ng-container>
+                        </select>
+                    </ng-container>
+                    <ng-container *ngFor="let division of getDBDispositionInfo()[dispositionSelection[i]].divisions">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" colspan="2">
+                                        {{division.divisionname}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let stop of division.stops">
+                                    <td>{{stop.stopname}}</td>
+                                    <td>{{stop.stopspecification}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </ng-container>
+                </div>
+            <!-- </div> -->
+        </div>
+        </div>
     </div>
     <br/>
     <br/>

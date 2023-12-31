@@ -45,6 +45,8 @@
                         </div>
                     </div>
                 </ng-container>
+                <artworkInformation [artworks]="getArtworksFromIds(stage.includeartworks)">
+                </artworkInformation>
                 <!-- <div *ngFor="let artwork of getArtworksFromIds(stage.includeartworks);" class="row align-items-end mb-3">
                     <div class="col-sm-6">
                         <div class="row" *ngIf="artwork.url">
@@ -135,6 +137,8 @@
                             </div>
                         </div>
                     </ng-container>
+                    <artworkInformation [artworks]="getArtworksFromIds(stage.includeartworks)">
+                    </artworkInformation>
                 </div>
 
                 <div class="alert alert-info" style="white-space: pre-wrap;" [innerHTML]="stage.help | linkifyHtml" *ngIf="stage.help"></div>
@@ -350,6 +354,8 @@
                             </div>
                         </div>
                     </ng-container>
+                    <artworkInformation [artworks]="getArtworksFromIds(stage.includeartworks)">
+                    </artworkInformation>
                     <!-- <div *ngFor="let artwork of getArtworksFromIds(stage.includeartworks); let first = first" class="row align-items-end mb-3">
                         <div class="col-sm-6">
                             <div class="row" *ngIf="artwork.url">
@@ -485,6 +491,8 @@
                             </div>
                         </div>
                     </ng-container>
+                    <artworkInformation [artworks]="getArtworksFromIds(stage.includeartworks)">
+                    </artworkInformation>
                     <!-- <div *ngFor="let artwork of getArtworksFromIds(stage.includeartworks); let first = first" class="row align-items-end mb-3">
                         <div class="col-sm-6">
                             <div class="row" *ngIf="artwork.url">

@@ -62,6 +62,10 @@ export class Model {
     //build history of selected artwork (organ)
     private dbBuildHistory: {year: string, builder: string, tasks: string}[] = [];
 
+    private dbDispositionInfo: {parthoodname: string, divisions: {divisionname: string, divisionorder: number, stops: {stoporder: string, stopname:string, stopspecification: string}[]}[]}[] = [];
+
+    //deposition information of selected artwork (organ)
+
     constructor(private dbDataSource: RestDataSource) {
 
         this.dbDataSource.getExhibitionData().subscribe(data => this.dbExhibitions = data);
@@ -73,6 +77,19 @@ export class Model {
         this.dbDataSource.getScriptSetData().subscribe(data => {this.dbScriptSets = data});
         this.dbDataSource.getCollection().subscribe(val => {this.dbCollectionArtworks.push(val)});
 
+    }
+    
+    // Deposition information
+    getDispositionInformation(artworkid) {
+        this.dbDataSource.getDispositionInfo(artworkid).subscribe(val => this.dbDispositionInfo.push(val));
+    }
+
+    resetDispositionInfo() {
+        this.dbDispositionInfo = [];
+    }
+
+    getDBDispositionInfo() {
+        return this.dbDispositionInfo;
     }
 
     // Build history

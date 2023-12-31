@@ -67,10 +67,15 @@ export class ArtworkTableComponent {
     selectEvent(item) {
         this.reloadArtworks();
         this.model.resetBuildHistory();
+        this.model.resetDispositionInfo();
         // do something with selected item
         this.selected = true;
         this.selectItem = item;
         this.getBuildHistory(item.artworkuri);
+        this.getDispositionInfo(item.artworkuri);
+        this.resetDispositionSelection();
+        this.hideBuildHistory = true;
+        this.hideDispositionHistory = true;
     }
     
     onChangeSearch(val: string) {
@@ -109,7 +114,7 @@ export class ArtworkTableComponent {
     }
 
     saveArtwork() {
-        let artwork: Artwork = {type: "artwork", name: this.selectItem["name"], buildHistory: this.getDBBuildHistory(),
+        let artwork: Artwork = {type: "artwork", name: this.selectItem["name"], buildHistory: this.getDBBuildHistory(), dispositions: this.getDBDispositionInfo(), 
         artist: this.selectItem["artist"], year: this.selectItem["year"], url: this.selectItem["filelocation"], location: this.selectItem["location"], artworkuri: this.selectItem["artworkuri"]};
 
         //add current user_ID as owner
@@ -153,6 +158,28 @@ export class ArtworkTableComponent {
 
     splitTextOnSeparator(text: string) {
         return text.split("|");
+    }
+
+    getDispositionInfo(artworkid='http://w3id.org/polifonia/resource/organs/Part03_007HELMO') {
+        this.model.getDispositionInformation(artworkid);
+    }
+
+    getDBDispositionInfo() {
+        return this.model.getDBDispositionInfo();
+    }
+
+    resetDBDispositionInfo() {
+        this.model.resetDispositionInfo();
+    }
+
+    hideBuildHistory: boolean = true;
+
+    hideDispositionHistory: boolean = true;
+
+    dispositionSelection: number[] = [0, 1];
+
+    resetDispositionSelection() {
+        this.dispositionSelection = [0, 1];
     }
 
 }

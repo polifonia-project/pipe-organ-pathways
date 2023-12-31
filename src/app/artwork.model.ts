@@ -11,6 +11,7 @@ export class Artwork {
         public owner?: string,
         public location?: string,
         public artworkuri?: string,
-        public buildHistory?: {year: string, builder: string, tasks: string}[]
+        public buildHistory?: {year: string, builder: string, tasks: string}[],
+        public dispositions?: {parthoodname: string, divisions: {divisionname: string, divisionorder: number, stops: {stoporder: string, stopname:string, stopspecification: string}[]}[]}[]
     ) {}
 }

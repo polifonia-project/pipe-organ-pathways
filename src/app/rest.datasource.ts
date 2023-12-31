@@ -179,7 +179,8 @@ import { ScriptSet } from "./scriptSet.model";
 
     //Collection query
 
-    private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
+    // private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
+    private collectionURL = this.configSettings.collectionURL+'sparql?query='+this.configSettings.collectionQuery;
       
     getCollection(): Observable<CollectionArtwork> {
         const obs = new Observable((observer) => {
@@ -214,20 +215,20 @@ import { ScriptSet } from "./scriptSet.model";
 
     private buildQueryPt2 = `%3E as ?organ) .
      
-     ?organ core2:isDescribedBy ?project .
+     ?organ core:isDescribedBy ?project .
       
-     ?project core2:hasTimeInterval ?timeInterval .
+     ?project core:hasTimeInterval ?timeInterval .
      ?timeInterval rdf:type core:TimeInterval .
-     ?timeInterval core2:startTime ?start .
-     ?timeInterval core2:endTime ?end .
+     ?timeInterval core:startTime ?start .
+     ?timeInterval core:endTime ?end .
       
-     ?project core2:hasAgentRole ?agentRole .
-     ?agentRole core2:hasRole organs:roleBuilder .
-     ?agentRole core2:hasAgent ?agent .
+     ?project core:hasAgentRole ?agentRole .
+     ?agentRole core:hasRole organs:roleBuilder .
+     ?agentRole core:hasAgent ?agent .
      ?agent rdfs:label ?agentLabel .
     
       
-     ?project core2:definesTask ?task .
+     ?project core:definesTask ?task .
      ?task rdfs:label ?taskLabel .
       
     FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
@@ -237,8 +238,34 @@ import { ScriptSet } from "./scriptSet.model";
     ORDER BY ASC(?start)
     `;
 
+//     private buildQueryPt2 = `%3E as ?organ) .
+     
+//     ?organ core2:isDescribedBy ?project .
+     
+//     ?project core2:hasTimeInterval ?timeInterval .
+//     ?timeInterval rdf:type core:TimeInterval .
+//     ?timeInterval core2:startTime ?start .
+//     ?timeInterval core2:endTime ?end .
+     
+//     ?project core2:hasAgentRole ?agentRole .
+//     ?agentRole core2:hasRole organs:roleBuilder .
+//     ?agentRole core2:hasAgent ?agent .
+//     ?agent rdfs:label ?agentLabel .
+   
+     
+//     ?project core2:definesTask ?task .
+//     ?task rdfs:label ?taskLabel .
+     
+//    FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
+    
+//    } 
+//    GROUP BY ?project ?agent ?agentLabel ?start ?end
+//    ORDER BY ASC(?start)
+//    `;
+
     getBuildHistory(artworkuri: string): Observable<any> {
-        let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
+        let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
+        // let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
         const obs = new Observable((observer) => {
             this.http.get<any>(buildURL).subscribe(data => {
                 for(var item of data["results"]["bindings"]) {
@@ -257,6 +284,114 @@ import { ScriptSet } from "./scriptSet.model";
         });
         return obs;
     }
+
+    getDispositionInfo(artworkuri: string): Observable<any> {
+        let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
+
+        const obs = new Observable((observer) => {
+            this.http.get<any>(dispositionURL).subscribe(data => {
+                for(var item of data["results"]["bindings"]) {
+                    let parthoodname = item["parthoodlabel"]["value"];
+                    let divisionList: {divisionname: string, divisionorder: number, stops: {stoporder: string, stopname:string, stopspecification: string}[]}[] = [];
+                    let disposition: {parthoodname: string, divisions: {divisionname: string, divisionorder: number, stops: {stoporder: string, stopname:string, stopspecification: string}[]}[]} = null;
+                    // let depositionItem: 
+                    let divisionsInfo = item["divisionsInfo"]["value"];
+                    let divisionsList = divisionsInfo.split("!");
+                    for(var divisionInfo of divisionsList) {
+                        let divisionInfoSplit = divisionInfo.split(":");
+                        let divisionId = divisionInfoSplit[0];
+                        let stops = divisionInfoSplit[1];
+                        let stoplist = stops.split(";");
+                        let divisionIdSplit = divisionId.split("|");
+                        let divisionOrder = divisionIdSplit[0];
+                        let divisionName = divisionIdSplit[1];
+            
+                        let stopList: {stoporder: string, stopname:string, stopspecification: string}[] = [];
+                        for(var stop of stoplist) {
+                            let stopSplit = stop.split("|");
+                            let stopOrder = stopSplit[0];
+                            let stopName = stopSplit[1];
+                            let stopSpecification = stopSplit[2];
+                            stopList.push({stoporder: stopOrder, stopname:stopName, stopspecification: stopSpecification})
+                        }
+                        stopList.sort((n1, n2) => {if(Number(n1.stoporder) > Number(n2.stoporder)) {return 1} else {return -1} });
+                        divisionList.push({divisionname: divisionName, divisionorder: divisionOrder, stops: stopList});
+                  
+                    }
+                    divisionList.sort((n1, n2) => {if(Number(n1.divisionorder) > Number(n2.divisionorder)) {return 1} else {return -1} });
+                    disposition = {parthoodname: parthoodname, divisions: divisionList};
+                    observer.next(disposition);
+                }
+                observer.complete();
+            },
+                error=>{
+                    observer.complete();
+                }
+            );
+        });
+        return obs;
+    }
+
+    private dispositionQueryPt1 = `PREFIX core: <https://w3id.org/polifonia/ontology/core/>
+    PREFIX core2: <https://w3id_org/polifonia/ontology/core/>
+    PREFIX organs: <http://w3id.org/polifonia/resource/organs/>
+    PREFIX organs2: <http://w3id_org/polifonia/resource/organs/>
+    PREFIX organ: <http://w3id.org/polifonia/ontology/organs/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns%23>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema%23>
+    
+    SELECT * 
+    WHERE
+    {
+       BIND(<`;
+
+    private dispositionQueryPt2 = `> as ?organ) .
+    ?organ rdf:type organ:Organ .
+   ?organ core:includesWhole ?parthood .
+   
+     ?parthood core:label ?parthoodlabel .
+     {
+   SELECT ?parthood (GROUP_CONCAT(?divisionInfo;separator="!") AS ?divisionsInfo) 
+   WHERE
+   {
+   SELECT ?parthood ?parthoodlabel ?division (concat(?divisionId,":", ?stops) as ?divisionInfo)
+   WHERE
+   {
+    ?parthood core:hasPart ?division . 
+   ?division core:name ?divisionName .
+   ?division  core:isClassifiedBy ?divisionType .
+   ?division organ:hasOrder ?divisionOrder .
+     BIND(concat(str(?divisionOrder),"|",?divisionName) AS ?divisionId) . 
+     
+   {SELECT ?division(GROUP_CONCAT(?stopInfo;separator=";") AS ?stops)
+   WHERE
+   {
+   SELECT ?division ?stopInfo
+   WHERE {
+     ?division rdf:type organ:OrganDivision .
+   
+     ?division core:hasPart ?stop .
+   ?stop rdf:type organ:OrganDivisionStop .
+   ?stop organ:hasOrder ?stopOrder .
+   ?stop core:hasName ?stopDName .
+   FILTER(isIRI(?stopDName)) .
+   ?stopDName core:name ?stopName .
+   ?stop organ:hasSpecification ?stopSpecification .
+    BIND(concat(str(?stopOrder),"|",?stopName,"|",?stopSpecification) AS ?stopInfo) . 
+   }
+   ORDER BY ?stopOrder
+   }
+   GROUP BY ?division
+   }
+   }
+   ORDER BY ?divisionOrder 
+   }
+   GROUP BY ?parthood
+   }
+   }
+   ORDER BY ?parthoodlabel`;
+
+
 
 }
 
