@@ -100,6 +100,15 @@ export class AllResponsesComponent implements OnInit {
         return usedArtworkIds;
     }
 
+    getAllArtworksOfScript(script: Script): Artwork[] {
+        if(this.getArtworkFromId(script.homepageartworkid).length > 0) {
+            return this.getArtworkFromId(script.homepageartworkid).concat(this.getNonHomepageArtworksOfScript(script));
+        }
+        else {
+            return this.getNonHomepageArtworksOfScript(script);
+        }
+    }
+
     getScript(_id: string): Script {
         return this.model.getScript(_id);
     }

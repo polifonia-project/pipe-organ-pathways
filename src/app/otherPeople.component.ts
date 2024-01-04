@@ -101,5 +101,13 @@ export class OtherPeopleComponent {
         return usedArtworks;
     }
 
+    getAllArtworksOfScript(script: Script): Artwork[] {
+        if(this.getArtworkFromId(script.homepageartworkid).length > 0) {
+            return this.getArtworkFromId(script.homepageartworkid).concat(this.getNonHomepageArtworksOfScript(script));
+        }
+        else {
+            return this.getNonHomepageArtworksOfScript(script);
+        }
+    }
 
 }
