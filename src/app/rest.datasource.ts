@@ -288,7 +288,7 @@ import { ScriptSet } from "./scriptSet.model";
     getDispositionInfo(artworkuri: string): Observable<any> {
         // let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
         let dispositionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
-console.log(dispositionURL);
+
         const obs = new Observable((observer) => {
             this.http.get<any>(dispositionURL).subscribe(data => {
                 for(var item of data["results"]["bindings"]) {
