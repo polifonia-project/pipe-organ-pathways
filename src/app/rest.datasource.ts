@@ -179,8 +179,8 @@ import { ScriptSet } from "./scriptSet.model";
 
     //Collection query
 
-    // private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
-    private collectionURL = this.configSettings.collectionURL+'sparql?query='+this.configSettings.collectionQuery;
+    private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
+    // private collectionURL = this.configSettings.collectionURL+'sparql?query='+this.configSettings.collectionQuery;
       
     getCollection(): Observable<CollectionArtwork> {
         const obs = new Observable((observer) => {
@@ -213,59 +213,59 @@ import { ScriptSet } from "./scriptSet.model";
     WHERE { 
       BIND(%3C`;
 
+    // private buildQueryPt2 = `%3E as ?organ) .
+     
+    //  ?organ core:isDescribedBy ?project .
+      
+    //  ?project core:hasTimeInterval ?timeInterval .
+    //  ?timeInterval rdf:type core:TimeInterval .
+    //  ?timeInterval core:startTime ?start .
+    //  ?timeInterval core:endTime ?end .
+      
+    //  ?project core:hasAgentRole ?agentRole .
+    //  ?agentRole core:hasRole organs:roleBuilder .
+    //  ?agentRole core:hasAgent ?agent .
+    //  ?agent rdfs:label ?agentLabel .
+    
+      
+    //  ?project core:definesTask ?task .
+    //  ?task rdfs:label ?taskLabel .
+      
+    // FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
+     
+    // } 
+    // GROUP BY ?project ?agent ?agentLabel ?start ?end
+    // ORDER BY ASC(?start)
+    // `;
+
     private buildQueryPt2 = `%3E as ?organ) .
      
-     ?organ core:isDescribedBy ?project .
-      
-     ?project core:hasTimeInterval ?timeInterval .
-     ?timeInterval rdf:type core:TimeInterval .
-     ?timeInterval core:startTime ?start .
-     ?timeInterval core:endTime ?end .
-      
-     ?project core:hasAgentRole ?agentRole .
-     ?agentRole core:hasRole organs:roleBuilder .
-     ?agentRole core:hasAgent ?agent .
-     ?agent rdfs:label ?agentLabel .
-    
-      
-     ?project core:definesTask ?task .
-     ?task rdfs:label ?taskLabel .
-      
-    FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
+    ?organ core2:isDescribedBy ?project .
      
-    } 
-    GROUP BY ?project ?agent ?agentLabel ?start ?end
-    ORDER BY ASC(?start)
-    `;
-
-//     private buildQueryPt2 = `%3E as ?organ) .
+    ?project core2:hasTimeInterval ?timeInterval .
+    ?timeInterval rdf:type core:TimeInterval .
+    ?timeInterval core2:startTime ?start .
+    ?timeInterval core2:endTime ?end .
      
-//     ?organ core2:isDescribedBy ?project .
-     
-//     ?project core2:hasTimeInterval ?timeInterval .
-//     ?timeInterval rdf:type core:TimeInterval .
-//     ?timeInterval core2:startTime ?start .
-//     ?timeInterval core2:endTime ?end .
-     
-//     ?project core2:hasAgentRole ?agentRole .
-//     ?agentRole core2:hasRole organs:roleBuilder .
-//     ?agentRole core2:hasAgent ?agent .
-//     ?agent rdfs:label ?agentLabel .
+    ?project core2:hasAgentRole ?agentRole .
+    ?agentRole core2:hasRole organs:roleBuilder .
+    ?agentRole core2:hasAgent ?agent .
+    ?agent rdfs:label ?agentLabel .
    
      
-//     ?project core2:definesTask ?task .
-//     ?task rdfs:label ?taskLabel .
+    ?project core2:definesTask ?task .
+    ?task rdfs:label ?taskLabel .
      
-//    FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
+   FILTER regex(str(?agentLabel), ".*[a-zA-Z].*")
     
-//    } 
-//    GROUP BY ?project ?agent ?agentLabel ?start ?end
-//    ORDER BY ASC(?start)
-//    `;
+   } 
+   GROUP BY ?project ?agent ?agentLabel ?start ?end
+   ORDER BY ASC(?start)
+   `;
 
     getBuildHistory(artworkuri: string): Observable<any> {
-        let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
-        // let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
+        // let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
+        let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
         const obs = new Observable((observer) => {
             this.http.get<any>(buildURL).subscribe(data => {
                 for(var item of data["results"]["bindings"]) {
@@ -286,8 +286,9 @@ import { ScriptSet } from "./scriptSet.model";
     }
 
     getDispositionInfo(artworkuri: string): Observable<any> {
-        let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
-
+        // let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
+        let dispositionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
+console.log(dispositionURL);
         const obs = new Observable((observer) => {
             this.http.get<any>(dispositionURL).subscribe(data => {
                 for(var item of data["results"]["bindings"]) {
@@ -332,20 +333,20 @@ import { ScriptSet } from "./scriptSet.model";
         return obs;
     }
 
-    private dispositionQueryPt1 = `PREFIX core: <https://w3id.org/polifonia/ontology/core/>
-    PREFIX core2: <https://w3id_org/polifonia/ontology/core/>
-    PREFIX organs: <http://w3id.org/polifonia/resource/organs/>
-    PREFIX organs2: <http://w3id_org/polifonia/resource/organs/>
-    PREFIX organ: <http://w3id.org/polifonia/ontology/organs/>
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns%23>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema%23>
+    private dispositionQueryPt1 = `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
+    PREFIX core2: %3Chttps://w3id_org/polifonia/ontology/core/%3E
+    PREFIX organs: %3Chttp://w3id.org/polifonia/resource/organs/%3E
+    PREFIX organs2: %3Chttp://w3id_org/polifonia/resource/organs/%3E
+    PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
+    PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
+    PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E
     
     SELECT * 
     WHERE
     {
-       BIND(<`;
+       BIND(%3C`;
 
-    private dispositionQueryPt2 = `> as ?organ) .
+    private dispositionQueryPt2 = `%3E as ?organ) .
     ?organ rdf:type organ:Organ .
    ?organ core:includesWhole ?parthood .
    
