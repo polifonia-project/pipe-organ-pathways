@@ -182,4 +182,39 @@ export class ArtworkTableComponent {
         this.dispositionSelection = [0, 1];
     }
 
+    copyDivisionTable(name: string, parthood:string, divisions: {divisionname: string, divisionorder: number, stops: {stoporder: string, stopname:string, stopspecification: string}[]}[]): string {
+        let copyString: string = '<table class="table table-sm">';
+        copyString = copyString+`<tbody>
+            <tr>
+                <td scope="col" colspan="2">
+                    ${name}
+                </td>
+            </tr>
+            <tr>
+                <td scope="col" colspan="2">
+                    ${parthood}
+                </td>
+            </tr>
+        </tbody>`;
+
+        for(var division of divisions) {
+            copyString = copyString+`<thead>
+            <tr>
+                <th scope="col" colspan="2">
+                    ${division.divisionname}
+                </th>
+            </tr>
+        </thead>
+        <tbody>`;
+            for(var stop of division.stops) {
+                copyString = copyString+`<tr>
+                <td>${stop.stopname}</td>
+                <td>${stop.stopspecification}</td>
+            </tr>`
+            }
+        copyString = copyString+'</tbody>';
+        }
+        copyString = copyString+'</table>'
+        return copyString;
+    }
 }
