@@ -85,7 +85,7 @@
                     </table>
                 </ng-container>
                 <ng-container *ngIf="artworks[0].dispositions.length">
-                    <button popoverTitle="Copied to clipboard" ngbPopover="You can paste it into a spreadsheet" ngxClipboard [cbContent]='copyDivisionTable(artworks[0].name, artworks[0].dispositions[dispositionSelection[i]].parthoodname, artworks[0].dispositions[dispositionSelection[i]].divisions)' class="btn btn-light m-0"><i class="fa fa-clone" aria-hidden="true"></i> Copy disposition table</button>
+                    <button popoverTitle="Copied to clipboard" ngbPopover="You can paste it into a spreadsheet" ngxClipboard [cbContent]='copyDivisionTable(artworks[0].name, artworks[0].dispositions[dispositionSelection[i]].parthoodname, artworks[0].dispositions[dispositionSelection[i]].divisions)' class="btn btn-light m-0"><i class="fa fa-clone" aria-hidden="true"></i> Copy table</button>
                 </ng-container>
             </div>
         </ng-container>
@@ -130,7 +130,7 @@
                     </ng-container>
 
                     </table>
-                    <button popoverTitle="Copied to clipboard" ngbPopover="You can paste it into a spreadsheet" ngxClipboard [cbContent]='copyDivisionTable(artworks[artworkSelectionList[i].artwork].name, artworks[artworkSelectionList[i].artwork].dispositions[artworkSelectionList[i].disposition].parthoodname, artworks[artworkSelectionList[i].artwork].dispositions[artworkSelectionList[i].disposition].divisions)' class="btn btn-light m-0"><i class="fa fa-clone" aria-hidden="true"></i> Copy disposition table</button>
+                    <button popoverTitle="Copied to clipboard" ngbPopover="You can paste it into a spreadsheet" ngxClipboard [cbContent]='copyDivisionTable(artworks[artworkSelectionList[i].artwork].name, artworks[artworkSelectionList[i].artwork].dispositions[artworkSelectionList[i].disposition].parthoodname, artworks[artworkSelectionList[i].artwork].dispositions[artworkSelectionList[i].disposition].divisions)' class="btn btn-light m-0"><i class="fa fa-clone" aria-hidden="true"></i> Copy table</button>
                 </ng-container>
                 
                 <ng-container *ngIf="!artworks[artworkSelectionList[i].artwork].dispositions.length">
