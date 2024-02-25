@@ -74,7 +74,7 @@
             <h4>{{script.name}}</h4>
         </div>
         <div class="col-md-1" style="min-width: 18em;" *ngIf="isAdmin()">
-            <button class="btn btn-secondary float-right" (click)="selectScript(script._id); showup(); copyScriptMessage=false;">Open path</button>
+            <button class="btn btn-secondary float-right" (click)="selectScript(script._id); setFacetsOnScriptOpening(); showup(); copyScriptMessage=false;">Open path</button>
             <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser==1" (click)="copyScript(script);">Copy path</button>
             <button class="btn btn-success float-right mt-3" style="clear: both;" *ngIf="script.removed && currentUser!=1" (click)="restoreScript(script); copyScriptMessage=false;">Restore path</button>
             <button class="btn btn-danger float-right mt-3" style="clear: both;" *ngIf="!script.removed && currentUser!=1" (click)="removeScript(script); copyScriptMessage=false;">Remove path</button>
@@ -288,22 +288,171 @@
           <a ngbNavLink><strong>Organs</strong></a>
           <ng-template ngbNavContent>
             <p>Choose the organs for your path.</p>
-            <div class="form-group" *ngIf="getArtworks(model.selectedScript).length > 12">
-                <div class="row">
-                    <div class="col-sm-2 pt-1" style="min-width: 12em;">
-                       <label for="search-text">Filter my collection:</label>
+            <div class="row">
+                <div class="col-12">
+                    <input type="text" class="form-control" id="organ-collection-search-text" aria-describedby="organ-collection-search-text" 
+                    [(ngModel)]="searchCollectionOrganText" placeholder="Search my collection">
+                </div>
+            </div>
+            <div class="row itemsBlock pt-2">
+                <div class="col-md-4 col-sm-6 col-12 pb-3">
+                    <div class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete
+                        [data]="builderStartList"
+                        [searchKeyword]="keywordBuilder"
+                        placeholder="Builder"
+                        [(ngModel)]="builderField"
+                        (selected)="selectEventBuilder($event)"
+                        (inputCleared)="inputClearedBuilder($event)"
+                        (inputChanged)="onChangeSearchBuilder($event)"
+                        (inputFocused)="onFocusedBuilder($event)"
+                        [itemTemplate]="itemTemplatez"
+                        [notFoundTemplate]="notFoundTemplatez"
+                        >
+                        </ng-autocomplete>
+                    
+                        <ng-template #itemTemplatez let-item>
+                        <a [innerHTML]="item.text"></a>
+                        </ng-template>
+                    
+                        <ng-template #notFoundTemplatez let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                        </ng-template>
                     </div>
-                    <div class="col-sm">
-                        <input type="email" class="form-control" id="search-text" aria-describedby="search-text" 
-                        [(ngModel)]="searchText" placeholder="Organ or builder">
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 pb-3">
+                    <div class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete
+                        [data]="locationStartList"
+                        [searchKeyword]="keywordLocation"
+                        placeholder="Location"
+                        [(ngModel)]="locationField"
+                        (selected)="selectEventLocation($event)"
+                        (inputCleared)="inputClearedLocation($event)"
+                        (inputChanged)="onChangeSearchLocation($event)"
+                        (inputFocused)="onFocusedLocation($event)"
+                        [itemTemplate]="itemTemplatey"
+                        [notFoundTemplate]="notFoundTemplatey"
+                        >
+                        </ng-autocomplete>
+                    
+                        <ng-template #itemTemplatey let-item>
+                        <a [innerHTML]="item.text"></a>
+                        </ng-template>
+                    
+                        <ng-template #notFoundTemplatey let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 pb-3">
+                    <div class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete
+                        [data]="yearStartList"
+                        [searchKeyword]="keywordYear"
+                        placeholder="Year"
+                        [(ngModel)]="yearField"
+                        (selected)="selectEventYear($event)"
+                        (inputCleared)="inputClearedYear($event)"
+                        (inputChanged)="onChangeSearchYear($event)"
+                        (inputFocused)="onFocusedYear($event)"
+                        [itemTemplate]="itemTemplatex"
+                        [notFoundTemplate]="notFoundTemplatex"
+                        >
+                        </ng-autocomplete>
+                    
+                        <ng-template #itemTemplatex let-item>
+                        <a [innerHTML]="item.text"></a>
+                        </ng-template>
+                    
+                        <ng-template #notFoundTemplatex let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 pb-3">
+                    <div class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete
+                        [data]="buildingStartList"
+                        [searchKeyword]="keywordBuilding"
+                        placeholder="Building"
+                        [(ngModel)]="buildingField"
+                        (selected)="selectEventBuilding($event)"
+                        (inputCleared)="inputClearedBuilding($event)"
+                        (inputChanged)="onChangeSearchBuilding($event)"
+                        (inputFocused)="onFocusedBuilding($event)"
+                        [itemTemplate]="itemTemplatew"
+                        [notFoundTemplate]="notFoundTemplatew"
+                        >
+                        </ng-autocomplete>
+                    
+                        <ng-template #itemTemplatew let-item>
+                        <a [innerHTML]="item.text"></a>
+                        </ng-template>
+                    
+                        <ng-template #notFoundTemplatew let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 pb-3">
+                    <div class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete
+                        [data]="divisionStartList"
+                        [searchKeyword]="keywordDivision"
+                        placeholder="Division"
+                        [(ngModel)]="divisionField"
+                        (selected)="selectEventDivision($event)"
+                        (inputCleared)="inputClearedDivision($event)"
+                        (inputChanged)="onChangeSearchDivision($event)"
+                        (inputFocused)="onFocusedDivision($event)"
+                        [itemTemplate]="itemTemplatev"
+                        [notFoundTemplate]="notFoundTemplatev"
+                        >
+                        </ng-autocomplete>
+                    
+                        <ng-template #itemTemplatev let-item>
+                        <a [innerHTML]="item.text"></a>
+                        </ng-template>
+                    
+                        <ng-template #notFoundTemplatev let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12 pb-3">
+                    <div class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete
+                        [data]="stopStartList"
+                        [searchKeyword]="keywordStop"
+                        placeholder="Stop"
+                        [(ngModel)]="stopField"
+                        (selected)="selectEventStop($event)"
+                        (inputCleared)="inputClearedStop($event)"
+                        (inputChanged)="onChangeSearchStop($event)"
+                        (inputFocused)="onFocusedStop($event)"
+                        [itemTemplate]="itemTemplateu"
+                        [notFoundTemplate]="notFoundTemplateu"
+                        >
+                        </ng-autocomplete>
+                    
+                        <ng-template #itemTemplateu let-item>
+                        <a [innerHTML]="item.text"></a>
+                        </ng-template>
+                    
+                        <ng-template #notFoundTemplateu let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                        </ng-template>
                     </div>
                 </div>
             </div>
+            <span *ngIf="filteredResults().length <= searchCollectionDisplayLimit" class="fs-6">{{filteredResults().length}} items shown</span>
+            <span *ngIf="filteredResults().length > searchCollectionDisplayLimit" class="fs-6">{{searchCollectionDisplayLimit}} of {{filteredResults().length}} items shown</span>
             <div class="alert alert-info" *ngIf="getArtworks(model.selectedScript).length == 0">
-                Use the <strong>Artworks</strong> option from the top pull-down menu to add artworks to your personal collection. These can then be added to your paths.
+                Use the <strong>Organs</strong> option from the top pull-down menu to add organs to your personal collection. These can then be added to your paths.
             </div>
-            <div class="row itemsBlock">
-                <div *ngFor="let artwork of getArtworks(model.selectedScript) | appFilter: searchText" class="col-md-4 col-sm-6 col-12 pb-3">
+            <div class="row itemsBlock pt-2">
+                <div *ngFor="let artwork of filteredResults() | slice:0:searchCollectionDisplayLimit" class="col-md-4 col-sm-6 col-12 pb-3">
                     <div class="row pl-3">
                         <div class="col-1 align-self-center" style="width:5px;">
                             <div class="form-check">
@@ -327,50 +476,25 @@
                                 <div class="ml-3">
                                     <div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="artwork.name"></div>
                                     <strong><div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="artwork.artist"></div></strong>
-                                    <div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="artwork.year"></div>
+                                    <!-- <div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="artwork.year"></div> -->
                                 </div>
                                     <!-- <div><span style="white-space: pre-wrap;" [innerHTML]="artwork.name"></span></div>
                                     <div><strong><span style="white-space: pre-wrap;" [innerHTML]="artwork.artist"></span></strong></div>
                                     <div>{{artwork.year}}</div> -->
                                 </label>
                             </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <button class="float-right btn btn-secondary" data-bs-toggle="modal" data-bs-target="#collectionModal" (click)="selectedCollectionItem=artwork">Open</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-              
                 </div>
             </div>
-
-            <!-- <div *ngFor="let artwork of getArtworks(model.selectedScript)" class="form-check form-check-inline pb-3 ml-1" style="width: 260px;"> -->
-            <!-- <div *ngFor="let artwork of getArtworks(model.selectedScript)" class="form-check form-check-inline pb-3 ml-1" style="width: 260px;">
-     
-                <div class=" align-self-center" style="width: 30px;">
-                    <input 
-                    class="form-check-input"
-                    type="checkbox"
-                    [value]=artwork._id
-                    [ngModel] = "model.selectedScript.artworkids.includes(artwork._id)"
-                    (change) = "artworksChange(model.selectedScript, artwork._id, $event)"
-                    />
-                </div>
-                <div class="col-sm">
-                    <div class="row">
-                        <span *ngIf="artwork.url">
-                            <img src="{{artwork.url}}" alt="{{artwork.name}}" height="auto" width="200px" >
-                        </span>
-                    </div>
-                    <div class="row">
-                        <label class="form-check-label"> 
-                        <div class="ml-3">
-                            <div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="artwork.name"></div>
-                            <strong><div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="artwork.artist"></div></strong>
-                            <div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="artwork.year"></div>
-                        </div>
-
-                        </label>
-                    </div>
-                </div>
-          
-            </div> -->
+            <div class="row pr-2 pl-2 pb-3" *ngIf="filteredResults().length > searchCollectionDisplayLimit">
+                <button class="btn btn-secondary" (click)="searchCollectionDisplayLimit = searchCollectionDisplayLimit+6">More results</button>
+            </div>
             <br/><br/>
            </ng-template>
         </li>
@@ -959,3 +1083,26 @@
 <br/>
 <br/>
 
+<!-- Collection Modal -->
+<div class="modal fade" id="collectionModal" tabindex="-1" aria-labelledby="collectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row align-items-end mb-3">
+                    <div class="col-md-6 col-sm-6">
+                        <img [src]="selectCollectiomItemURL()" alt="selectCollectiomItemName()" height="auto" style="width:100%" (error)="handleMissingImage($event)">
+                    </div>
+                    <div class="col-sm ml-3">
+                        <div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="selectCollectiomItemName()"></div>
+                        <strong><div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="selectCollectiomItemArtist()"></div></strong>
+                    </div>
+                </div>
+                <artworkInformation [artworks]="getSelectedCollectionItemAsList()">
+                </artworkInformation>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="float-right btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

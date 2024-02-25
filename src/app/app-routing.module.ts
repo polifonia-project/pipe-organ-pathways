@@ -30,7 +30,7 @@ const routes: Routes = [
   { path: 'management', component: ContributionManagementComponent, resolve: {model2: ModelResolver2, model4: ModelResolver4 } },
   { path: 'otherPeople', component: OtherPeopleComponent, resolve: { model1: ModelResolver1, model2: ModelResolver2, model3: ModelResolver3, model4: ModelResolver4 }  },
   { path: 'authoring', component: ScriptAuthoringComponent, resolve: { model1: ModelResolver1, model3: ModelResolver3, model6: ModelResolver6} },
-  { path: 'wizard', component: ScriptWizardComponent, resolve: { model1: ModelResolver1, model3: ModelResolver3, model6: ModelResolver6} },
+  { path: 'wizard', component: ScriptWizardComponent, resolve: { model1: ModelResolver1, model2: ModelResolver2, model3: ModelResolver3, model6: ModelResolver6} },
   { path: 'themes', component: ThemeTableComponent, resolve: { model3: ModelResolver3 } },
   { path: 'artworks', component: ArtworkTableComponent, resolve: { model2: ModelResolver2 } },
   { path: 'users', component: UserTableComponent, resolve: { model5: ModelResolver5 } },

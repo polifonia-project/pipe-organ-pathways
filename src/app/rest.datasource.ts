@@ -189,7 +189,8 @@ import { ScriptSet } from "./scriptSet.model";
                 for(var item of data["results"]["bindings"]) {
                     let collectionItem: CollectionArtwork = {name: item["title"]["value"], artist: item["creatorname"]["value"], year:item["year"]["value"],
                     filelocation: this.configSettings.imageURL+item["artworkurl"]["value"]+".jpg", searchstring: item["title"]["value"]+', '+item["creatorname"]["value"],
-                    location: item["location"]["value"], artworkuri: item["artwork"]["value"]
+                    location: item["location"]["value"], artworkuri: item["artwork"]["value"], building: item["building"]["value"], divisions: item["divisions"]["value"].split("|"),
+                    stops: item["stops"]["value"].split("|")
                     };
                     observer.next(collectionItem);
                 }

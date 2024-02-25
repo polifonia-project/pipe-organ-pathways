@@ -11,6 +11,7 @@ import { Exhibition } from "./exhibition.model";
 import { ConfigSettings } from "./config";
 import { Question } from "./question.model";
 import { findIndex } from "rxjs/operators";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: "paScriptWizard",
@@ -23,8 +24,34 @@ export class ScriptWizardComponent {
         (event.target as HTMLImageElement).src = 'assets/img/488199.png';
     }
 
-    constructor(public currentuser: CurrentUser, public model: Model){}
+    constructor(public currentuser: CurrentUser, public model: Model, private activatedRoute: ActivatedRoute){}
 
+    builderStartList: {text: string}[];
+    locationStartList: {text: string}[]
+    yearStartList: {text: string}[];
+    buildingStartList: {text: string}[];
+    divisionStartList: {text: string}[]
+    stopStartList: {text: string}[];
+
+
+    setFacetsOnScriptOpening() {
+        this.builderStartList = this.uniqByMap(this.getArtworks(this.model.selectedScript).map(x => x.artist)).map(x => ({text: x}));
+        this.locationStartList = this.uniqByMap(this.getArtworks(this.model.selectedScript).map(x => x.location)).map(x => ({text: x}));
+        this.yearStartList = this.uniqByMap(this.getArtworks(this.model.selectedScript).map(x => x.year)).map(x => ({text: x}));
+        this.buildingStartList = this.uniqByMap(this.getArtworks(this.model.selectedScript).map(x => x.building)).map(x => ({text: x}));
+        this.divisionStartList = this.uniqByMap(this.getArtworks(this.model.selectedScript).map(x => x.divisions).reduce((x, y) => x.concat(y), [])).map(x => ({text: x}));
+        this.stopStartList = this.uniqByMap(this.getArtworks(this.model.selectedScript).map(x => x.stops).reduce((x, y) => x.concat(y), [])).map(x => ({text: x}));
+    }
+
+
+    //holding facet selections when moving between tabs
+    builderField = '';
+    locationField = '';
+    yearField = '';
+    buildingField = '';
+    divisionField = '';
+    stopField = '';
+    
     //get build history for clipboard
     getBuildHistoryForClipboard(artwork: Artwork): string {
         if(!artwork.buildHistory.length) {
@@ -432,7 +459,7 @@ export class ScriptWizardComponent {
 
     filterArtworksForScriptOwner(artworks: Artwork[], script: Script): Artwork[] {
 
-        if (script.owner == undefined) {
+        if (!script.owner == undefined) {
             return [];
         }
 
@@ -713,4 +740,239 @@ export class ScriptWizardComponent {
         return true;
     }
 
+    //*********artwork faceted search
+    selectedCollectionItem: Artwork = null;
+
+    getSelectedCollectionItemAsList() {
+        let result = [];
+        if(this.selectedCollectionItem) {
+            result.push(this.selectedCollectionItem);
+        }
+        return result;
+    }
+
+    selectCollectiomItemName() {
+        if(this.selectedCollectionItem) {
+            return this.selectedCollectionItem.name;
+        }
+        else {
+            return '';
+        }
+    }
+    selectCollectiomItemArtist() {
+        if(this.selectedCollectionItem) {
+            return this.selectedCollectionItem.artist;
+        }
+        else {
+            return '';
+        }
+    }
+    selectCollectiomItemURL() {
+        if(this.selectedCollectionItem) {
+            return this.selectedCollectionItem.url;
+        }
+        else {
+            return '';
+        }
+    }
+
+    uniqByMap<T>(array: T[]): T[] {
+        const map = new Map();
+        for (const item of array) {
+            map.set(item, item);
+        }
+        return Array.from(map.values());
+    }
+
+    //////////////////
+
+    // *********my collection search
+    searchCollectionOrganText = "";
+    searchCollectionDisplayLimit = 12;
+
+
+    //selections from selection and events
+    builderSelected: string = null;
+    locationSelected: string = null;
+    yearSelected: string = null;
+    buildingSelected: string = null;
+    divisionSelected: string = null;
+    stopSelected: string = null;
+
+    //////////my collection facets
+    keywordBuilder = 'text';
+    keywordYear = 'text';
+    keywordLocation = 'text';
+    keywordBuilding = 'text';
+    keywordDivision = 'text';
+    keywordStop = 'text';
+
+    selectEventBuilder(item: {text: string}) {
+        this.builderSelected = item.text;
+        // do something with selected item
+        this.recaluateNameLists();
+    }
+
+    onChangeSearchBuilder(search: string) {
+    // fetch remote data from here
+    // And reassign the 'data' which is binded to 'data' property.
+    }
+
+    onFocusedBuilder(e) {
+    // do something
+    }
+
+    inputClearedBuilder(e) {
+        this.builderSelected = null;
+        this.recaluateNameLists();
+    }
+
+    selectEventLocation(item: {text: string}) {
+        this.locationSelected = item.text;
+        // do something with selected item
+        this.recaluateNameLists();
+    }
+
+    onChangeSearchLocation(search: string) {
+        // fetch remote data from here
+        // And reassign the 'data' which is binded to 'data' property.
+    }
+
+    onFocusedLocation(e) {
+        // do something
+    }
+
+    inputClearedLocation(e) {
+        this.locationSelected = null;
+        this.recaluateNameLists();
+    }
+
+    selectEventYear(item: {text: string}) {
+        this.yearSelected = item.text;
+        // do something with selected item
+        this.recaluateNameLists();
+    }
+    
+    onChangeSearchYear(search: string) {
+    // fetch remote data from here
+    // And reassign the 'data' which is binded to 'data' property.
+    }
+    
+    onFocusedYear(e) {
+    // do something
+    }
+    
+    inputClearedYear(e) {
+        this.yearSelected = null;
+        this.recaluateNameLists();
+    }
+
+    selectEventBuilding(item: {text: string}) {
+        this.buildingSelected = item.text;
+        // do something with selected item
+        this.recaluateNameLists();
+    }
+    
+    onChangeSearchBuilding(search: string) {
+    // fetch remote data from here
+    // And reassign the 'data' which is binded to 'data' property.
+    }
+    
+    onFocusedBuilding(e) {
+    // do something
+    }
+    
+    inputClearedBuilding(e) {
+        this.buildingSelected = null;
+        this.recaluateNameLists();
+    }
+    
+    selectEventDivision(item: {text: string}) {
+        this.divisionSelected = item.text;
+        // do something with selected item
+        this.recaluateNameLists();
+    }
+    
+    onChangeSearchDivision(search: string) {
+    // fetch remote data from here
+    // And reassign the 'data' which is binded to 'data' property.
+    }
+    
+    onFocusedDivision(e) {
+    // do something
+    }
+    
+    inputClearedDivision(e) {
+        this.divisionSelected = null;
+        this.recaluateNameLists();
+    }
+    
+    selectEventStop(item: {text: string}) {
+        this.stopSelected = item.text;
+        // do something with selected item
+        this.recaluateNameLists();
+    }
+    
+    onChangeSearchStop(search: string) {
+    // fetch remote data from here
+    // And reassign the 'data' which is binded to 'data' property.
+    }
+    
+    onFocusedStop(e) {
+    // do something
+    }
+    
+    inputClearedStop(e) {
+        this.stopSelected = null;
+        this.recaluateNameLists();
+    }
+
+    //reloading the shown results based on facet selection
+    filteredResults() {
+        let results = this.getArtworks(this.model.selectedScript).filter(it => {
+            return (it.name+it.artist+it.year).toLowerCase().includes(this.searchCollectionOrganText.toLowerCase())});
+    
+        if(this.builderSelected) {
+            results = results.filter(x => x.artist == this.builderSelected);
+        }
+        if(this.locationSelected) {
+            results = results.filter(x => x.location == this.locationSelected);
+        }
+        if(this.yearSelected) {
+            results = results.filter(x => x.year == this.yearSelected);
+        }
+        if(this.buildingSelected) {
+            results = results.filter(x => x.building == this.buildingSelected);
+        }
+        if(this.divisionSelected) {
+            results = results.filter(x => x.divisions.includes(this.divisionSelected));
+        }
+        if(this.stopSelected) {
+            results = results.filter(x => x.stops.includes(this.stopSelected));
+        }
+        return results;
+    }
+
+    recaluateNameLists() {
+        let results = this.filteredResults().filter(it => {
+            return (it.name+it.artist+it.year).toLowerCase().includes(this.searchCollectionOrganText.toLowerCase())});
+
+        let builderNameList: {text: string}[] = this.uniqByMap(results.map(x => x.artist)).map(x => ({text: x}));
+        this.builderStartList = [... builderNameList];
+
+        let locationNameList: {text: string}[] = this.uniqByMap(results.map(x => x.location)).map(x => ({text: x}));
+        this.locationStartList = [... locationNameList];
+
+        let yearNameList: {text: string}[] = this.uniqByMap(results.map(x => x.year)).map(x => ({text: x}));
+        this.yearStartList = [... yearNameList];
+
+        let buildingNameList: {text: string}[] = this.uniqByMap(results.map(x => x.building)).map(x => ({text: x}));
+        this.buildingStartList = [... buildingNameList];
+
+        let divisionsNameList = this.uniqByMap(results.map(x => x.divisions).reduce((x, y) => x.concat(y), [])).map(x => ({text: x}));
+        this.divisionStartList = [... divisionsNameList];
+
+        let stopsNameList = this.uniqByMap(results.map(x => x.stops).reduce((x, y) => x.concat(y), [])).map(x => ({text: x}));
+        this.stopStartList = [... stopsNameList];
+    }
 }
