@@ -33,6 +33,7 @@ export class ScriptWizardComponent {
     divisionStartList: {text: string}[]
     stopStartList: {text: string}[];
 
+    showCurrentSelection: boolean = false;
 
     setFacetsOnScriptOpening() {
         this.builderStartList = this.uniqByMap(this.getArtworks(this.model.selectedScript).map(x => x.artist)).map(x => ({text: x}));
@@ -931,6 +932,10 @@ export class ScriptWizardComponent {
     filteredResults() {
         let results = this.getArtworks(this.model.selectedScript).filter(it => {
             return (it.name+it.artist+it.year).toLowerCase().includes(this.searchCollectionOrganText.toLowerCase())});
+
+        if(this.showCurrentSelection) {
+            results = results.filter(x => this.model.selectedScript.artworkids.includes(x._id));
+        }
     
         if(this.builderSelected) {
             results = results.filter(x => x.artist == this.builderSelected);

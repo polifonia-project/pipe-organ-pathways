@@ -42,6 +42,7 @@ import { ThankyouComponent } from './thankyou.component';
 import { FilterUserPipe } from './filteruser.pipe';
 import { SortableHeaderDirective } from './sortable-header.directive';
 import { ArtworkInformationComponent } from './artworkInformation.component';
+import { FilterSelectedArtworksPipe } from './filterselectedartworks.pipe';
 
 
 @NgModule({
@@ -69,7 +70,8 @@ import { ArtworkInformationComponent } from './artworkInformation.component';
     ThankyouComponent,
     FilterUserPipe,
     SortableHeaderDirective,
-    ArtworkInformationComponent
+    ArtworkInformationComponent,
+    FilterSelectedArtworksPipe
     ],
   imports: [
     BrowserModule,

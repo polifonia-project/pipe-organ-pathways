@@ -287,7 +287,16 @@
         <li ngbNavItem>
           <a ngbNavLink><strong>Organs</strong></a>
           <ng-template ngbNavContent>
-            <p>Choose the organs for your path.</p>
+            <div class="row mb-1">
+                <div class="col">
+                    Choose organs for your path.
+                </div>
+                <!-- <div class="col-6 text-end">
+                    <input class="form-check-input" type="checkbox" [checked]="showCurrentSelection" [(ngModel)]="showCurrentSelection">
+                    &nbsp;Show only chosen organs
+                </div> -->
+            </div>
+            <!-- <p>Choose the organs for your path.</p> -->
             <div class="row">
                 <div class="col-12">
                     <input type="text" class="form-control" id="organ-collection-search-text" aria-describedby="organ-collection-search-text" 
@@ -446,14 +455,22 @@
                     </div>
                 </div>
             </div>
-            <span *ngIf="filteredResults().length <= searchCollectionDisplayLimit" class="fs-6">{{filteredResults().length}} items shown</span>
-            <span *ngIf="filteredResults().length > searchCollectionDisplayLimit" class="fs-6">{{searchCollectionDisplayLimit}} of {{filteredResults().length}} items shown</span>
+            <div class="row">
+                <div class="col-6">
+                    <span class="fs-6" *ngIf="(filteredResults() | appFilterArtworks:model.selectedScript.artworkids:showCurrentSelection).length <= searchCollectionDisplayLimit">{{(filteredResults() | appFilterArtworks:model.selectedScript.artworkids:showCurrentSelection).length}} items shown</span>
+                    <span class="fs-6" *ngIf="(filteredResults() | appFilterArtworks:model.selectedScript.artworkids:showCurrentSelection).length > searchCollectionDisplayLimit" class="fs-6">{{(filteredResults() | appFilterArtworks:model.selectedScript.artworkids:showCurrentSelection | slice:0:searchCollectionDisplayLimit).length}} of {{(filteredResults() | appFilterArtworks:model.selectedScript.artworkids:showCurrentSelection).length}} items shown</span>
+                </div>
+                <div class="col-6 text-end">
+                    <input class="form-check-input" type="checkbox" [checked]="showCurrentSelection" [(ngModel)]="showCurrentSelection">
+                    <span class="fs-6">&nbsp;Show only chosen organs</span>
+                </div>
+            </div>
             <div class="alert alert-info" *ngIf="getArtworks(model.selectedScript).length == 0">
                 Use the <strong>Organs</strong> option from the top pull-down menu to add organs to your personal collection. These can then be added to your paths.
             </div>
             <div class="row itemsBlock pt-2">
-                <div *ngFor="let artwork of filteredResults() | slice:0:searchCollectionDisplayLimit" class="col-md-4 col-sm-6 col-12 pb-3">
-                    <div class="row pl-3">
+                <div *ngFor="let artwork of filteredResults() | appFilterArtworks:model.selectedScript.artworkids:showCurrentSelection  | slice:0:searchCollectionDisplayLimit;" class="col-md-4 col-sm-6 col-12 pb-3">
+                    <div class="row">
                         <div class="col-1 align-self-center" style="width:5px;">
                             <div class="form-check">
                                 <input 
@@ -492,7 +509,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row pr-2 pl-2 pb-3" *ngIf="filteredResults().length > searchCollectionDisplayLimit">
+            <div class="row pr-2 pl-2 pb-3" *ngIf="(filteredResults() | appFilterArtworks:model.selectedScript.artworkids:showCurrentSelection).length > searchCollectionDisplayLimit">
                 <button class="btn btn-secondary" (click)="searchCollectionDisplayLimit = searchCollectionDisplayLimit+6">More results</button>
             </div>
             <br/><br/>
