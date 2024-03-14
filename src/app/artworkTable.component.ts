@@ -678,7 +678,7 @@ export class ArtworkTableComponent implements OnInit {
 
     recaluateNameListsArchive() {
         let results = this.filteredResultsArchive().filter(it => {
-            return (it.name+it.artist+it.year).toLowerCase().includes(this.searchCollectionOrganText.toLowerCase())});
+            return (it.name+it.artist+it.year).toLowerCase().includes(this.searchOrganText.toLowerCase())});
 
         let builderNameList: {text: string}[] = this.uniqByMap(results.map(x => x.artist)).map(x => ({text: x}));
         this.builderStartListArchive = [... builderNameList];
