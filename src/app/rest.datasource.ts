@@ -179,8 +179,8 @@ import { ScriptSet } from "./scriptSet.model";
 
     //Collection query
 
-    private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
-    // private collectionURL = this.configSettings.collectionURL+'sparql?query='+this.configSettings.collectionQuery;
+    // private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
+    private collectionURL = this.configSettings.collectionURL+'sparql?query='+this.configSettings.collectionQuery;
       
     getCollection(): Observable<CollectionArtwork> {
         const obs = new Observable((observer) => {
@@ -188,10 +188,16 @@ import { ScriptSet } from "./scriptSet.model";
                 let resarray:  Array<CollectionArtwork> = [];
                 for(var item of data["results"]["bindings"]) {
                     let collectionItem: CollectionArtwork = {name: item["title"]["value"], artist: item["creatorname"]["value"], year:item["year"]["value"],
-                    filelocation: this.configSettings.imageURL+item["artworkurl"]["value"]+".jpg", searchstring: item["title"]["value"]+', '+item["creatorname"]["value"],
+                    filelocation: item["artworkurl"]["value"], searchstring: item["title"]["value"]+', '+item["creatorname"]["value"],
                     location: item["location"]["value"], artworkuri: item["artwork"]["value"], building: item["building"]["value"], divisions: item["divisions"]["value"].split("|"),
-                    stops: item["stops"]["value"].split("|")
+                    // let collectionItem: CollectionArtwork = {name: item["title"]["value"], artist: item["creatorname"]["value"], year:item["year"]["value"],
+                    // filelocation: this.configSettings.imageURL+item["artworkurl"]["value"]+".jpg", searchstring: item["title"]["value"]+', '+item["creatorname"]["value"],
+                    // location: item["location"]["value"], artworkuri: item["artwork"]["value"], building: item["building"]["value"], divisions: item["divisions"]["value"].split("|"),
+                    // stops: item["stops"]["value"].split("|")
                     };
+                    if(item["stops"] != undefined){
+                        collectionItem.stops = item["stops"]["value"].split("|");
+                    }
                     observer.next(collectionItem);
                 }
                 observer.complete();
@@ -203,6 +209,85 @@ import { ScriptSet } from "./scriptSet.model";
             );
         });
         return obs;
+    }
+
+    buildQuery(artworkuri: string): string {
+        return `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
+        PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
+        PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E 
+        PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
+        PREFIX organs: %3Chttp://w3id.org/polifonia/resource/organs/%3E
+        
+        SELECT ?start (?agentLabel as ?builder) ?tasks WHERE {
+        
+        
+        {SELECT ?project (group_concat(distinct ?taskLabel;separator="|") as ?tasks) 
+        
+        WHERE {
+        BIND (%3C${artworkuri}%3E as ?organ) .
+          
+        ?organ rdf:type organ:Organ .
+        ?organ core:describedBy ?project .
+        ?project core:definesTask ?task .
+        ?task core:value ?taskLabel .
+        } 
+        GROUP BY ?project
+        }
+        
+        {
+        SELECT ?project (SAMPLE(?agentLabel1) as ?agentLabel) WHERE { 
+        BIND (%3C${artworkuri}%3E as ?organ) .
+         ?organ core:describedBy ?project .
+        ?project core:hasProjectist ?projectist .
+        ?projectist core:involvesAgent ?agent .
+        ?agent core:hasName ?name .
+        ?name core:name ?agentLabel1 .
+        }
+        GROUP BY ?project
+        }
+        
+        {
+          SELECT ?project (SAMPLE(?starttime) as ?start) WHERE { 
+        BIND (%3C${artworkuri}%3E as ?organ) .
+        ?organ rdf:type organ:Organ .
+        ?organ core:describedBy ?project .
+        ?project core:hasTimedLocation ?timedLocation .
+        ?timedLocation core:hasTimeInterval ?timeInterval .
+        ?timeInterval core:time ?starttime .
+        }
+        GROUP BY ?project
+        }
+          
+        }
+        ORDER BY ASC(?start)`;
+
+        return `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
+        PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
+        PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E 
+        PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
+        PREFIX organs: %3Chttp://w3id.org/polifonia/resource/organs/%3E
+        
+        SELECT ?start (?agentLabel as ?builder) (group_concat(?taskLabel;separator="|") as ?tasks)
+        
+        WHERE {
+        BIND (%3C${artworkuri}%3E as ?organ) .
+        ?organ rdf:type organ:Organ .
+        ?organ core:describedBy ?project .
+        ?project core:hasTimedLocation ?timedLocation .
+        ?timedLocation core:hasTimeInterval ?timeInterval .
+        ?timeInterval core:time ?start .
+        ?project core:hasProjectist ?projectist .
+        ?projectist core:involvesAgent ?agent .
+        ?agent core:hasName ?name .
+        ?name core:name ?agentLabel .
+        ?project core:definesTask ?task .
+        ?task core:value ?taskLabel 
+        
+        
+        } 
+        GROUP BY ?project ?agent ?agentLabel ?start
+        ORDER BY ASC(?start)`;
+
     }
 
     private buildQueryPt1 = `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
@@ -266,7 +351,8 @@ import { ScriptSet } from "./scriptSet.model";
 
     getBuildHistory(artworkuri: string): Observable<any> {
         // let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
-        let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
+        let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQuery(artworkuri);
+        // let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
         const obs = new Observable((observer) => {
             this.http.get<any>(buildURL).subscribe(data => {
                 for(var item of data["results"]["bindings"]) {
@@ -287,8 +373,9 @@ import { ScriptSet } from "./scriptSet.model";
     }
 
     getDispositionInfo(artworkuri: string): Observable<any> {
+        let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQuery(artworkuri);
         // let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
-        let dispositionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
+        // let dispositionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
 
         const obs = new Observable((observer) => {
             this.http.get<any>(dispositionURL).subscribe(data => {
@@ -334,6 +421,70 @@ import { ScriptSet } from "./scriptSet.model";
         return obs;
     }
 
+    dispositionQuery(artworkuri: string): string {
+    return `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
+    PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
+    PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E 
+    PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
+    PREFIX organs: %3Chttp://w3id.org/polifonia/resource/organs/%3E
+    
+        SELECT * 
+        WHERE
+        {
+          BIND (%3C${artworkuri}%3E as ?organ) .
+        ?organ rdf:type organ:Organ .
+       ?organ core:includesWhole ?parthood .
+       
+         ?parthood core:label ?parthoodlabel .
+         {
+    
+       SELECT ?parthood (GROUP_CONCAT(?divisionInfo;separator="!") AS ?divisionsInfo) 
+       WHERE
+       {
+      
+    SELECT ?parthood ?division (concat(?divisionId,":", ?stops) as ?divisionInfo)
+       WHERE
+       {
+              BIND (%3C${artworkuri}%3E as ?organ) .
+         ?organ core:includesWhole ?parthood .
+       ?parthood core:hasPart ?division . 
+       ?division core:name ?divisionName .
+       ?division  core:isClassifiedBy ?divisionType .
+       ?division organ:hasOrder ?divisionOrder .
+       BIND(concat(str(?divisionOrder),"|",?divisionName) AS ?divisionId) .  
+    
+    {SELECT ?division (GROUP_CONCAT(?stopInfo;separator=";") AS ?stops)
+       WHERE
+       {
+       SELECT ?division ?stopInfo
+       WHERE {
+         BIND (%3C${artworkuri}%3E as ?organ) .
+         ?organ core:includesWhole ?parthood .
+         ?parthood core:hasPart ?division .
+       ?division rdf:type organ:OrganDivision .
+       ?division core:hasPart ?stop .
+       ?stop rdf:type organ:OrganDivisionStop .
+       ?stop organ:hasOrder ?stopOrder .
+       ?stop core:name ?stopName .
+       ?stop organ:hasSpecification ?stopSpecification .
+        BIND(concat(str(?stopOrder),"|",?stopName,"|",?stopSpecification) AS ?stopInfo) . 
+       }
+       ORDER BY ?stopOrder
+       }
+       GROUP BY ?division
+    }
+    }
+    ORDER BY ?divisionOrder 
+    }
+    GROUP BY ?parthood
+              }
+       }
+       ORDER BY ?parthoodlabel
+    
+    `;
+    }
+
+
     private dispositionQueryPt1 = `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
     PREFIX core2: %3Chttps://w3id_org/polifonia/ontology/core/%3E
     PREFIX organs: %3Chttp://w3id.org/polifonia/resource/organs/%3E
@@ -365,7 +516,7 @@ import { ScriptSet } from "./scriptSet.model";
    ?division organ:hasOrder ?divisionOrder .
      BIND(concat(str(?divisionOrder),"|",?divisionName) AS ?divisionId) . 
      
-   {SELECT ?division(GROUP_CONCAT(?stopInfo;separator=";") AS ?stops)
+   {SELECT ?division (GROUP_CONCAT(?stopInfo;separator=";") AS ?stops)
    WHERE
    {
    SELECT ?division ?stopInfo
