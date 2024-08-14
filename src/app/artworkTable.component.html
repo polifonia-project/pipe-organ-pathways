@@ -442,7 +442,7 @@
                     <strong><div class="row text-left" style="white-space: pre-wrap; line-height: 1.2;" [innerHTML]="selectedArtist()"></div></strong>
                 </div>
             </div>
-            <div style="width:100%" class="bg-light mt-2 mb-2">
+            <div *ngIf="getDBBuildHistory().length" style="width:100%" class="bg-light mt-2 mb-2">
                 <div class="row">
                     <div class="col-12">
                         <span *ngIf="!getDBBuildHistory().length" class="float-left mt-1 ml-2">Loading...</span>
@@ -483,7 +483,6 @@
                 <div style="width:100%" class="bg-light mt-2 mb-2">
                 <div class="row">
                     <div class="col-12">
-                        <span *ngIf="!getDBDispositionInfo().length" class="float-left mt-1 ml-2">Loading...</span>
                         <button class="btn btn-dark float-right"
                         (click)="hideDispositionHistory = !hideDispositionHistory"
                         [attr.aria-expanded]="!hideDispositionHistory"
@@ -491,6 +490,11 @@
                     </div>
                 </div>
                 <div [ngbCollapse]="hideDispositionHistory" class="collapse navbar-collapse mt-2">
+                    <div *ngIf="!getDBDispositionInfo().length" class="col-6" style="display: inline-block; vertical-align: top;">
+                        <div class="lh-sm float-left mt-1 ml-2 mb-3">
+                            No disposition information available for this organ
+                        </div>
+                    </div>
                     <ng-container *ngIf="getDBDispositionInfo().length">
                         <div *ngFor="let disposition of getDBDispositionInfo().slice(0,2); let i = index" class="col-6" style="display: inline-block; vertical-align: top;">
                             <ng-container *ngIf="getDBDispositionInfo().length == 1">
@@ -526,9 +530,9 @@
                             </ng-container>
                         </div>
                     </ng-container>
-                    <ng-container *ngIf="!getDBDispositionInfo().length">
+                    <!-- <ng-container *ngIf="!getDBDispositionInfo().length">
                         <p class="lh-sm">&nbsp;</p>
-                    </ng-container>
+                    </ng-container> -->
                 </div>
             </div>
         </div>
@@ -536,7 +540,7 @@
             <div *ngIf="artworkAddedAlert" class="col-12 alert alert-success" role="alert">
                 Organ added to your collection
             </div>
-            <button class="float-right btn btn-success" (click)="artworkAddedAlert=true; saveArtwork();" [disabled]='artworkAlreadyAdded(selectItem["artworkuri"]) || !getDBBuildHistory().length || !getDBDispositionInfo().length'>Add to collection</button>
+            <button class="float-right btn btn-success" (click)="artworkAddedAlert=true; saveArtwork();" [disabled]='artworkAlreadyAdded(selectItem["artworkuri"])'>Add to collection</button>
             <button type="button" class="float-right btn btn-secondary" data-bs-dismiss="modal" (click)="artworkAddedAlert=false;">Close</button>
         </div>
       </div>
