@@ -540,7 +540,7 @@
             <div *ngIf="artworkAddedAlert" class="col-12 alert alert-success" role="alert">
                 Organ added to your collection
             </div>
-            <button class="float-right btn btn-success" (click)="artworkAddedAlert=true; saveArtwork();" [disabled]='artworkAlreadyAdded(selectItem["artworkuri"])'>Add to collection</button>
+            <button class="float-right btn btn-success" (click)="artworkAddedAlert=true; saveArtwork();" [disabled]='artworkAlreadyAdded(selectItem["artworkuri"]) || !(this.getDBBuildHistory().length || this.getDBDispositionInfo().length)'>Add to collection</button>
             <button type="button" class="float-right btn btn-secondary" data-bs-dismiss="modal" (click)="artworkAddedAlert=false;">Close</button>
         </div>
       </div>

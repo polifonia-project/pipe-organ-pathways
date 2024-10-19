@@ -19,7 +19,6 @@ export class ModelResolver2  {
     resolve(route: ActivatedRouteSnapshot): Observable<Artwork[]> {
         if(this.model2.getArtworks().length == 0) {
             this.messages.reportMessage(new Message("Loading artworks..."));
-            this.dataSource.getCollection();
             return this.dataSource.getArtworkData();
         }
         else {

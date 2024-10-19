@@ -179,9 +179,9 @@ import { ScriptSet } from "./scriptSet.model";
 
     //Collection query
 
-    // private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
-    private collectionURL = this.configSettings.collectionURL+'sparql?query='+this.configSettings.collectionQuery;
-      
+    private collectionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.configSettings.collectionQuery;
+    // private collectionURL = this.configSettings.collectionURL+'sparql?query='+this.configSettings.collectionQuery;
+
     getCollection(): Observable<CollectionArtwork> {
         const obs = new Observable((observer) => {
             this.http.get<any>(this.collectionURL).subscribe(data => {
@@ -213,6 +213,54 @@ import { ScriptSet } from "./scriptSet.model";
 
     buildQuery(artworkuri: string): string {
         return `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
+PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
+PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E
+PREFIX rdfs2: %3Chttp://www_w3_org/2000/01/rdf-schema%23%3E 
+PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
+PREFIX core2: %3Chttps://w3id_org/polifonia/ontology/core/%3E
+PREFIX organ2: %3Chttp://w3id_org/polifonia/ontology/organs/%3E
+SELECT ?start (?agentLabel as ?builder) ?tasks WHERE {  
+    {SELECT ?project (group_concat(distinct ?taskLabel;separator="|") as ?tasks) 
+    WHERE {
+    BIND (%3C${artworkuri}%3E as ?organ) .
+    ?organ rdf:type organ:Organ .
+    ?organ core2:describedBy ?project .
+    ?project core2:definesTask ?task .
+    ?task core2:value ?taskLabel .
+    } 
+    GROUP BY ?project
+    }
+
+    {
+    SELECT ?project (SAMPLE(?agentLabel1) as ?agentLabel) WHERE { 
+    BIND (%3C${artworkuri}%3E as ?organ) .
+    ?organ core2:describedBy ?project .
+    ?project core2:hasProjectist ?projectist .
+    ?projectist core2:involvesAgent ?agent .
+    ?agent core2:hasName ?name .
+    ?name core2:name ?agentLabel1 .
+    }
+    GROUP BY ?project
+    }
+
+    {
+    SELECT ?project (SAMPLE(?starttime) as ?start) WHERE { 
+    BIND (%3C${artworkuri}%3E as ?organ) .
+    ?organ rdf:type organ:Organ .
+    ?organ core2:describedBy ?project .
+    ?project core2:hasTimedLocation ?timedLocation .
+    ?timedLocation core2:hasTimeInterval ?timeInterval .
+    ?timeInterval core2:time ?starttime .
+    }
+    GROUP BY ?project
+    }
+        
+}
+ORDER BY ASC(?start)
+    `};
+
+    buildQuery2(artworkuri: string): string {
+        return `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
         PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
         PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E 
         PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
@@ -225,7 +273,6 @@ import { ScriptSet } from "./scriptSet.model";
         
         WHERE {
         BIND (%3C${artworkuri}%3E as ?organ) .
-          
         ?organ rdf:type organ:Organ .
         ?organ core:describedBy ?project .
         ?project core:definesTask ?task .
@@ -237,7 +284,7 @@ import { ScriptSet } from "./scriptSet.model";
         {
         SELECT ?project (SAMPLE(?agentLabel1) as ?agentLabel) WHERE { 
         BIND (%3C${artworkuri}%3E as ?organ) .
-         ?organ core:describedBy ?project .
+        ?organ core:describedBy ?project .
         ?project core:hasProjectist ?projectist .
         ?projectist core:involvesAgent ?agent .
         ?agent core:hasName ?name .
@@ -247,7 +294,7 @@ import { ScriptSet } from "./scriptSet.model";
         }
         
         {
-          SELECT ?project (SAMPLE(?starttime) as ?start) WHERE { 
+        SELECT ?project (SAMPLE(?starttime) as ?start) WHERE { 
         BIND (%3C${artworkuri}%3E as ?organ) .
         ?organ rdf:type organ:Organ .
         ?organ core:describedBy ?project .
@@ -351,7 +398,8 @@ import { ScriptSet } from "./scriptSet.model";
 
     getBuildHistory(artworkuri: string): Observable<any> {
         // let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
-        let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQuery(artworkuri);
+        // let buildURL = this.configSettings.collectionURL+'sparql?query='+this.buildQuery(artworkuri);
+        let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQuery(artworkuri);
         // let buildURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.buildQueryPt1+artworkuri+this.buildQueryPt2;
         const obs = new Observable((observer) => {
             this.http.get<any>(buildURL).subscribe(data => {
@@ -373,7 +421,8 @@ import { ScriptSet } from "./scriptSet.model";
     }
 
     getDispositionInfo(artworkuri: string): Observable<any> {
-        let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQuery(artworkuri);
+        // let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQuery(artworkuri);
+        let dispositionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.dispositionQuery(artworkuri);
         // let dispositionURL = this.configSettings.collectionURL+'sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
         // let dispositionURL = this.configSettings.collectionURL+this.configSettings.collectionDatasetUUID+'/sparql?query='+this.dispositionQueryPt1+artworkuri+this.dispositionQueryPt2;
 
@@ -422,6 +471,65 @@ import { ScriptSet } from "./scriptSet.model";
     }
 
     dispositionQuery(artworkuri: string): string {
+    return `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
+PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
+PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E
+PREFIX rdfs2: %3Chttp://www_w3_org/2000/01/rdf-schema%23%3E 
+PREFIX organ: %3Chttp://w3id.org/polifonia/ontology/organs/%3E
+PREFIX core2: %3Chttps://w3id_org/polifonia/ontology/core/%3E
+PREFIX organ2: %3Chttp://w3id_org/polifonia/ontology/organs/%3E
+SELECT * 
+WHERE
+{
+    BIND (%3C${artworkuri}%3E as ?organ) .
+    ?organ rdf:type organ:Organ .
+    ?organ core2:includesWhole ?parthood .
+    ?parthood core2:label ?parthoodlabel .
+    {
+        SELECT ?parthood (GROUP_CONCAT(?divisionInfo;separator="!") AS ?divisionsInfo) 
+        WHERE
+        {
+        SELECT ?parthood ?division (concat(?divisionId,":", ?stops) as ?divisionInfo)
+        WHERE
+        {
+        BIND (%3C${artworkuri}%3E as ?organ) .
+        ?organ core2:includesWhole ?parthood .
+        ?parthood core2:hasPart ?division . 
+        ?division core2:name ?divisionName .
+        ?division  core2:isClassifiedBy ?divisionType .
+        ?division organ2:hasOrder ?divisionOrder .
+        BIND(concat(str(?divisionOrder),"|",?divisionName) AS ?divisionId) .  
+    
+        {SELECT ?division (GROUP_CONCAT(?stopInfo;separator=";") AS ?stops)
+        WHERE
+        {
+            SELECT ?division ?stopInfo
+            WHERE {
+                BIND (%3C${artworkuri}%3E as ?organ) .
+                ?organ core2:includesWhole ?parthood .
+                ?parthood core2:hasPart ?division .
+                ?division rdf:type organ:OrganDivision .
+                ?division core2:hasPart ?stop .
+                ?stop rdf:type organ:OrganDivisionStop .
+                ?stop organ2:hasOrder ?stopOrder .
+                ?stop core2:name ?stopName .
+                ?stop organ2:hasSpecification ?stopSpecification .
+                BIND(concat(str(?stopOrder),"|",?stopName,"|",?stopSpecification) AS ?stopInfo) . 
+            }
+            ORDER BY ?stopOrder
+            }
+            GROUP BY ?division
+        }
+    }
+    ORDER BY ?divisionOrder 
+    }
+    GROUP BY ?parthood
+    }
+}
+ORDER BY ?parthoodlabel`;
+    }
+
+    dispositionQueryOld(artworkuri: string): string {
     return `PREFIX core: %3Chttps://w3id.org/polifonia/ontology/core/%3E
     PREFIX rdf: %3Chttp://www.w3.org/1999/02/22-rdf-syntax-ns%23%3E
     PREFIX rdfs: %3Chttp://www.w3.org/2000/01/rdf-schema%23%3E 
